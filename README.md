@@ -23,23 +23,27 @@
 - Instantly fetches your local weather using browser geolocation.
 - Handles permission errors gracefully with helpful prompts.
   
-- <img width="30" height="8" alt=<img width="1787" height="872" alt="Screenshot 2025-09-28 101434" src="https://github.com/user-attachments/assets/1d26a8e0-c02d-41b8-a7ec-79f69d064ded" />
+<img width="1822" height="882" alt="image" src="https://github.com/user-attachments/assets/d4ff52c2-051c-492a-ad6a-6c68e43ef401" />
 
 ### 🔍 *City Search & Suggestions*
 - Search any city worldwide with instant suggestions.
 - Recent searches and favorites for quick access.
   
-- <img width="862" height="543" alt="Screenshot 2025-09-28 101328" src="https://github.com/user-attachments/assets/87104af3-9a06-4df8-ada1-0fd138b650a2" />
+  <img width="862" height="543" alt="Screenshot 2025-09-28 101328" src="https://github.com/user-attachments/assets/87104af3-9a06-4df8-ada1-0fd138b650a2" />
 
 ### ⭐ *Favorites*
 - Save your favorite cities for one-click weather checks.
 - Remove favorites with a single tap.
 
+  <img width="582" height="142" alt="image" src="https://github.com/user-attachments/assets/4e7b31ec-40d7-421b-9c86-66a5a2410dca" />
+
+
 ### 📊 *Detailed Weather Dashboard*
 - Current weather: temperature, feels like, min/max, humidity, wind, and more.
 - Beautiful weather icons and descriptions.
-  
-- [![](https://raw.githubusercontent.com/yourusername/skybuddy/main/.github/demo-dashboard.gif)](https://github.com/yourusername/skybuddy)
+
+<img width="1719" height="727" alt="Screenshot 2025-09-28 101544" src="https://github.com/user-attachments/assets/63361e03-836b-4c7a-8395-68cdd2e91d14" />
+
 
 ### ⏰ *Hourly & 5-Day Forecasts*
 - Interactive hourly temperature chart (Recharts powered).
@@ -52,7 +56,6 @@
 - Smooth skeleton loaders and animated transitions.
 - Dark/light mode toggle.
   
-<img width="1358" height="891" alt="Screenshot 2025-09-28 001419" src="https://github.com/user-attachments/assets/d5b0aba9-06da-463e-9867-aa135487e8e6" />
 
 ### ⚡ *Performance & Tech*
 - Built with React 19, Vite, TypeScript, and Tailwind CSS.
