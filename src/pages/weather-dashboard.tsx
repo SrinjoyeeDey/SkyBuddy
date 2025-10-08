@@ -1,3 +1,4 @@
+import { useAQIQuery, useUVIndexQuery, usePollenQuery } from "@/hooks/use-weather";
 import { Button } from "@/components/ui/button";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { AlertTriangle, MapPin, RefreshCcw } from "lucide-react";
@@ -9,22 +10,24 @@ import HourlyTemp from "@/components/hourly-temp";
 import WeatherDetails from "@/components/weather-details";
 import WeatherForecast from "@/components/weather-forecast";
 import FavoriteCities from "@/components/favorite-cities";
+import HealthRecommendations from "@/components/healthRecommendations";
 
 const WeatherDashboard = () => {
   const {coordinates,error:locationError,getLocation,isLoading:locationLoading}=useGeolocation();
 
   const locationQuery=useReverseGeocodeQuery(coordinates);
   console.log('Reverse geocode data:', locationQuery.data);
-  const weatherQuery=useWeatherQuery(coordinates);
-  const forecastQuery=useForecastQuery(coordinates);
+
+  const weatherQuery = useWeatherQuery(coordinates);
+  const forecastQuery = useForecastQuery(coordinates);
+  const aqiQuery = useAQIQuery(coordinates);
+  const uvQuery = useUVIndexQuery(coordinates);
+  const pollenQuery = usePollenQuery(coordinates);
 
   console.log(weatherQuery.data)
 
   const handleRefresh=()=>{
     getLocation();
-    if(coordinates){
-
-    }
   };
   if(locationLoading){
      return <WeatherSkeleton />
@@ -77,42 +80,46 @@ const WeatherDashboard = () => {
     return <WeatherSkeleton />
   }
 
+
+  // Extract AQI, UV, and pollen values for health recommendations
+  const aqi = aqiQuery.data?.list?.[0]?.main?.aqi;
+  const uv = uvQuery.data?.value;
+  const pollen = pollenQuery.data?.pollen_types;
+
   return (
     <div className="space-y-4">
-
       <FavoriteCities />
       <div className="flex items-center justify-between">
-        
         <h1 className="text-xl font-bold tracking-tight">My Location</h1>
         <Button variant={'outline'} size={'icon'} onClick={handleRefresh}
-        disabled={weatherQuery.isFetching || forecastQuery.isFetching}
-
+          disabled={weatherQuery.isFetching || forecastQuery.isFetching}
         >
-          <RefreshCcw className={`h-4 w-4 ${weatherQuery.isFetched?'animate-spin':''}`}/> 
+          <RefreshCcw className={`h-4 w-4 ${weatherQuery.isFetched ? 'animate-spin' : ''}`}/>
         </Button>
       </div>
 
+      {/* Health Recommendations */}
+      <HealthRecommendations aqi={aqi} uv={uv} pollen={pollen} />
+
       <div className="grid gap-6">
         <div className="flex flex-col lg:flex-row gap-4">
-        {weatherQuery.data && (
-          <>
-            <CurrentWeather data={weatherQuery.data} locationName={locationName} isLoading={weatherQuery.isFetching || locationQuery.isFetching} />
-            {forecastQuery.data && <HourlyTemp data={forecastQuery.data} />}
-          </>
-        )}
-       
-      </div>
+          {weatherQuery.data && (
+            <>
+              <CurrentWeather data={weatherQuery.data} locationName={locationName} isLoading={weatherQuery.isFetching || locationQuery.isFetching} />
+              {forecastQuery.data && <HourlyTemp data={forecastQuery.data} />}
+            </>
+          )}
+        </div>
       </div>
 
-          <div className="grid gap-6 md:grid-cols-2 items-start">
-              {/* details */}
-              <WeatherDetails data={weatherQuery.data} />
-              {/* forecast */}
-
-              <WeatherForecast data={forecastQuery.data} />
-          </div>
+      <div className="grid gap-6 md:grid-cols-2 items-start">
+        {/* details */}
+        <WeatherDetails data={weatherQuery.data} />
+        {/* forecast */}
+        <WeatherForecast data={forecastQuery.data} />
       </div>
-  )
+    </div>
+  );
 }
 
 export default WeatherDashboard;
