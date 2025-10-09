@@ -1,3 +1,39 @@
+export interface AQIData {
+    coord: Coordinates;
+    list: Array<{
+        main: {
+            aqi: number; // 1-5 scale
+        };
+        components: {
+            co: number;
+            no: number;
+            no2: number;
+            o3: number;
+            so2: number;
+            pm2_5: number;
+            pm10: number;
+            nh3: number;
+        };
+        dt: number;
+    }>;
+}
+
+export interface UVIndexData {
+    lat: number;
+    lon: number;
+    date_iso: string;
+    value: number;
+}
+
+export interface PollenData {
+    coord: Coordinates;
+    pollen_types: Array<{
+        type: string; 
+        index: number; 
+        risk: string;
+    }>;
+    dt: number;
+}
 export interface Coordinates {
     lat:number;
     lon:number;
