@@ -11,6 +11,7 @@ import WeatherForecast from "@/components/weather-forecast";
 import { useState } from "react";
 import FavoriteButton from "@/components/favorite-button";
 import HealthRecommendations from "@/components/healthRecommendations";
+import WeatherPlaylists from "@/components/weather-playlist";
 
 const CityPage = () => {
   
@@ -73,6 +74,7 @@ const CityPage = () => {
             {/* forecast */}
             <WeatherForecast data={forecastQuery.data} />
         </div>
+        <WeatherPlaylists data={weatherQuery.data} />
       </div>
     </div>
   );
