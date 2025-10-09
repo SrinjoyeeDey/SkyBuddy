@@ -19,7 +19,6 @@ increment += randoFiver;
 
 
 const dropStyle = {
-// left or right positioning must be inline because it's dynamic
 ...(isBackRow ? { right: `${increment}%` } : { left: `${increment}%` }),
 bottom: `${randoFiver + randoFiver - 1 + 100}%`,
 animationDelay: `0.${randoHundo}s`,
@@ -39,14 +38,12 @@ className="drop w-[15px] h-[120px] absolute bottom-[100%] pointer-events-none an
 style={dropStyle}
 key={`drop-${isBackRow ? 'b' : 'f'}-${idx}`}
 >
-{/* stem */}
 <div
 className="stem w-[1px] h-[60%] ml-[7px] bg-gradient-to-b from-transparent to-white/25 animate-stem"
 style={innerStyle}
 />
 
 
-{/* splat */}
 <div
 className="splat w-[15px] h-[10px] border-t-2 border-dotted rounded-full border-white/50 transform scale-0 animate-splat"
 style={innerStyle}

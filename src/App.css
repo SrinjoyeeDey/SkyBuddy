@@ -49,7 +49,6 @@
     }
     
     
-    /* small responsive tweak (optional) */
     @media (max-width: 420px) {
     .drop { width: 10px; height: 90px; }
     .stem { margin-left: 5px; }
@@ -64,17 +63,16 @@ rgba(255,247,140,0.08) 30%,
 rgba(255,183,77,0.10) 60%,
 rgba(255,112,67,0.06) 100%
 );
-opacity: 0.95; /* overall subtlety */
+opacity: 0.95; 
 mix-blend-mode: screen;
 transform-origin: top right;
 animation: overlay-drift 6s ease-in-out infinite alternate;
 }
 
 
-/* the sun: radial gradient from yellow -> orange -> red, with soft glow */
 .sun {
 background: radial-gradient(circle at 30% 30%,
-#fff59d 0%, /* pale center */
+#fff59d 0%, 
 #ffe082 15%,
 #ffc107 35%,
 #ff8a65 60%,
@@ -85,7 +83,6 @@ filter: saturate(1.02);
 }
 
 
-/* tiny slow movement for sun to make rays and wash feel alive */
 @keyframes sun-pulse {
 0% { transform: scale(1) translateZ(0); }
 50% { transform: scale(1.02) translate(-2px, 1px); }
@@ -93,50 +90,42 @@ filter: saturate(1.02);
 }
 
 
-/* overlay drift: small translate to mimic wind pushing colors */
 @keyframes overlay-drift {
 0% { transform: translate(0px, 0px) rotate(0.01deg); }
 100% { transform: translate(-8px, 6px) rotate(0.03deg); }
 }
 
 
-/* ensure the visual elements don't interfere with pointer events */
 .sun-overlay, .sun { pointer-events: none; }
 
 
-/* optional responsive tweaks */
 @media (max-width: 420px) {
 .sun { width: 6rem; height: 6rem; }
 }
 
-/* vertical fall (outer container) */
 .animate-drop {
   animation-name: drop;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
 
-/* gentle horizontal sway + tiny rotation for natural motion */
 .animate-stem {
   animation-name: sway;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 
-/* back row subtle depth */
 .rain.back-row {
   opacity: 0.45;
   transform: translateY(10%);
 }
 
-/* drop moves element down the full viewport */
 @keyframes drop {
   0% { transform: translateY(0); }
   80% { transform: translateY(110vh); }
   100% { transform: translateY(110vh); }
 }
 
-/* soft sway so flakes don't look rigid */
 @keyframes sway {
   0%   { transform: translateX(0) rotate(0deg); opacity: 1; }
   25%  { transform: translateX(6px) rotate(4deg); opacity: 1; }
@@ -145,7 +134,6 @@ filter: saturate(1.02);
   100% { transform: translateX(0) rotate(0deg); opacity: 1; }
 }
 
-/* crisp snow visual (no blur) */
 .flake,
 .flake-core,
 .flake-lobe {
@@ -153,35 +141,24 @@ filter: saturate(1.02);
   display: block;
   position: absolute;
   background: #ffffff;
-  /* very subtle inner shadow to give a tiny volume without blur */
   box-shadow: inset 0 0 0.5px rgba(0,0,0,0.03), 0 0 0.5px rgba(0,0,0,0.02);
   border-radius: 9999px;
   opacity: 0.98;
 }
 
-/* make core slightly brighter (if you want) */
+
 .flake-core {
   background: #ffffff;
 }
 
-/* lobes slightly smaller and offset are handled inline (see component) */
 .flake-lobe {
   background: #ffffff;
 }
 
-/* responsive tweak - keep flakes readable on small screens */
 @media (max-width: 420px) {
   .drop { width: 10px; height: 90px; }
 }
 
-
-/* --------------------------
-  Thunder / Rain / Lightning
-   paste into app.css
-   Tailwind handles layout/colors; these contain animations & fine visuals
-   -------------------------- */
-
-/* rain drop - thin streak */
 .rain-drop {
   position: absolute;
   top: -10%;
@@ -196,7 +173,6 @@ filter: saturate(1.02);
   will-change: transform, opacity;
 }
 
-/* subtle sway while falling to emulate wind */
 @keyframes rain-fall {
   0% {
     transform: translateY(-10vh) rotate(var(--r-tilt, -6deg));
@@ -215,7 +191,6 @@ filter: saturate(1.02);
   }
 }
 
-/* FLASH overlay that brightens the whole scene quickly */
 .lightning-flash {
   position: absolute;
   inset: 0;
@@ -226,7 +201,6 @@ filter: saturate(1.02);
   animation: lightning-flash-fade 220ms ease-in-out forwards;
 }
 
-/* this triggers when parent opacity is applied; short and punchy */
 @keyframes lightning-flash-fade {
   0% { opacity: 0; filter: blur(0px) brightness(1); }
   12% { opacity: 1; filter: blur(2px) brightness(2.4); }
@@ -234,7 +208,6 @@ filter: saturate(1.02);
   100% { opacity: 0; filter: blur(0px) brightness(1); }
 }
 
-/* tiny shake for the child content to emphasize lightning strike */
 .shake-on {
   animation: thunder-shake 360ms ease-in-out;
   transform-origin: center top;
@@ -249,7 +222,6 @@ filter: saturate(1.02);
   100% { transform: translateY(0) rotate(0deg); }
 }
 
-/* bolt SVG styling + quick stroke animation */
 .bolt-svg {
   display: block;
   overflow: visible;
@@ -257,7 +229,7 @@ filter: saturate(1.02);
   transform-origin: center top;
 }
 
-/* the bolt path will "draw" and glow */
+
 .bolt-path {
   stroke: rgba(255, 255, 255, 0.95);
   stroke-width: 3;
@@ -269,7 +241,7 @@ filter: saturate(1.02);
   filter: drop-shadow(0 6px 14px rgba(255,255,255,0.35));
 }
 
-/* draw and then quickly fade */
+
 @keyframes bolt-draw {
   0% {
     stroke-dashoffset: 300;
@@ -289,7 +261,7 @@ filter: saturate(1.02);
   }
 }
 
-/* little glow ripple when bolt appears */
+
 .bolt-glow-on {
   position: absolute;
   inset: 0;
@@ -306,12 +278,12 @@ filter: saturate(1.02);
   100% { opacity: 0; transform: scale(1.05); }
 }
 
-/* responsive: thinner drops on small screens */
+
 @media (max-width: 420px) {
   .rain-drop { width: 1px !important; height: 60px !important; }
 }
 
-/* small visual polish to avoid seeing very crisp white lines on dark bg */
+
 .rain-drop::before {
   content: "";
   display: block;
@@ -320,7 +292,7 @@ filter: saturate(1.02);
   border-radius: 2px;
 }
 
-/* reduce motion if user prefers reduced motion */
+
 @media (prefers-reduced-motion: reduce) {
   .rain-drop { animation: none !important; }
   .shake-on { animation: none !important; }
@@ -328,34 +300,26 @@ filter: saturate(1.02);
   .lightning-flash { animation: none !important; opacity: 0.2 !important; }
 }
 
-
-/* ------------------------
-   Cloud / Wind animations
-   Paste into app.css
-   Tailwind for layout; these contain shapes & animations
-   ------------------------ */
-
-/* base cloud shape - made from 3 overlapping circles using pseudo-elements */
 .cloud {
   position: absolute;
-  width: 240px;               /* base width (scaled by transform) */
+  width: 240px;               
   height: 80px;
   background: rgba(255,255,255,0.95);
   border-radius: 9999px;
   filter: blur(0.6px);
   box-shadow: 0 10px 30px rgba(6,18,30,0.12), inset 0 -6px 18px rgba(0,0,0,0.03);
   transform-origin: center;
-  /* horizontal travel animation uses css variable --cloud-duration */
+  
   animation-name: cloud-drift, cloud-bob;
   animation-timing-function: linear, ease-in-out;
   animation-iteration-count: infinite, infinite;
-  /* main duration taken from inline var; fallback 40s */
+  
   animation-duration: var(--cloud-duration, 40s), 6s;
   animation-delay: var(--cloud-delay, 0s);
   will-change: transform, opacity;
 }
 
-/* pseudo-elements for puffy lobes */
+
 .cloud::before,
 .cloud::after {
   content: "";
@@ -378,11 +342,11 @@ filter: saturate(1.02);
   transform-origin: right center;
 }
 
-/* layers will have different scale & visual weight by using transform (we also set scale inline) */
+
 .cloud-back {
   filter: blur(1.2px) saturate(0.9) brightness(1.03);
   opacity: 0.75;
-  animation-duration: calc(var(--cloud-duration, 40s) * 1.25), 8s; /* slower drift, slower bob */
+  animation-duration: calc(var(--cloud-duration, 40s) * 1.25), 8s; 
   animation-delay: var(--cloud-delay, 0s);
 }
 
@@ -396,7 +360,7 @@ filter: saturate(1.02);
   animation-duration: calc(var(--cloud-duration, 40s) * 0.78), 5.6s;
 }
 
-/* move from left (entered at left negative) to off the right edge */
+
 @keyframes cloud-drift {
   0% {
     transform: translateX(-30vw) scale(1);
@@ -415,7 +379,7 @@ filter: saturate(1.02);
   }
 }
 
-/* small vertical bob for realism */
+
 @keyframes cloud-bob {
   0% { transform: translateY(0); }
   25% { transform: translateY(-6px); }
@@ -424,20 +388,20 @@ filter: saturate(1.02);
   100% { transform: translateY(0); }
 }
 
-/* gusting state: speed up drift and add tilt */
+
 .gusting .cloud {
-  /* shorten duration to make clouds cross faster during gusts */
+  
   animation-duration: calc(var(--cloud-duration, 40s) * 0.45), 3.2s !important;
   transform-origin: center top;
   transition: filter 300ms ease;
 }
 
-/* extra tilt on front layer during gusts */
+
 .gusting .cloud-front {
   transform: rotate(-2deg) scale(1.02);
 }
 
-/* little content sway when gusts apply */
+
 .wind-sway {
   animation: content-sway 900ms ease-in-out;
 }
@@ -450,7 +414,7 @@ filter: saturate(1.02);
   100% { transform: translateX(0) translateY(0); }
 }
 
-/* wind lines visual indicator (subtle streaks moving right) */
+
 .wind-lines {
   position: absolute;
   inset: 0;
@@ -462,7 +426,7 @@ filter: saturate(1.02);
   animation: wind-lines-fade 1.2s linear infinite;
 }
 
-/* we only show them during gusting */
+
 .gusting .wind-lines {
   opacity: 0.9;
   animation: wind-lines-move 1s linear infinite;
@@ -473,20 +437,20 @@ filter: saturate(1.02);
   mix-blend-mode: screen;
 }
 
-/* wind lines motion */
+
 @keyframes wind-lines-move {
   0% { background-position: 0 0, 0 0; }
   100% { background-position: -600px 0, -300px 0; }
 }
 
-/* keep motion accessible for reduced-motion users */
+
 @media (prefers-reduced-motion: reduce) {
   .cloud { animation: none !important; }
   .wind-sway { animation: none !important; }
   .wind-lines { animation: none !important; opacity: 0.2 !important; }
 }
 
-/* responsive: smaller clouds & shorter travel distance on tiny screens */
+
 @media (max-width: 420px) {
   .cloud { width: 160px; height: 56px; }
   .cloud::before, .cloud::after { width: 56%; height: 92%; top: -14%; }
@@ -500,7 +464,7 @@ filter: saturate(1.02);
 .animate-sky-shift { background-color:#ffffff; animation: sky-shift 6s ease-in-out infinite alternate; will-change: background-color; }
 
 .animate-sky-shift {
-  /* start color so there's no jump */
+  
   background-color: #ffffff;
   animation: sky-shift 6s ease-in-out infinite alternate;
   will-change: background-color;
@@ -530,15 +494,15 @@ filter: saturate(1.02);
   100% { transform: translateX(0) translateY(0); }
 }
 
-/* pattern classes */
-/* make shakes smooth and GPU-accelerated */
+
+
 .wind-sway {
   will-change: transform;
   backface-visibility: hidden;
   perspective: 1000px;
 }
 
-/* smoother pattern animations */
+
 .wind-sway-1 {
   animation: content-sway-1 1000ms cubic-bezier(.22,.9,.35,1) both;
 }
