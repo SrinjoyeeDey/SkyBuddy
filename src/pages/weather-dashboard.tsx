@@ -78,7 +78,7 @@ const WeatherDashboard = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-30 py-10 bg-transparent">
 
       <FavoriteCities />
       <div className="flex items-center justify-between">

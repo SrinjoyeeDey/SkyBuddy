@@ -2,6 +2,7 @@ import type { ForecastData } from "@/api/types";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { ArrowDown, ArrowUp, Droplets, Wind } from "lucide-react";
+import RainWrapper from "./ui/rainWrapper";
 
 interface WeatherForecastProps{
     data:ForecastData;
@@ -47,7 +48,7 @@ const WeatherForecast = ({data}:WeatherForecastProps) => {
 
 
   return (
-    <Card>
+    <Card className="bg-transparent">
         <CardHeader>
             <CardTitle>5-Day Forecast</CardTitle>
                 </CardHeader>
