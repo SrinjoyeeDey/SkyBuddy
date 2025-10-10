@@ -1,26 +1,18 @@
 import { API_CONFIG } from "./config"
-import type { Coordinates, ForecastData, GeocodingResponse, WeatherData } from "./types";
-
-type UVIndexData = {
-    lat: number;
-    lon: number;
-    date_iso: string;
-    date: number;
-    value: number;
-};
+import type { Coordinates, ForecastData, GeocodingResponse, WeatherData, AQIData, UVIndexData, PollenData } from "./types";
 
 class WeatherAPI{
-    async getAQI({lat, lon}: Coordinates) {
+    async getAQI({lat, lon}: Coordinates): Promise<AQIData> {
         const url = this.createUrl(`${API_CONFIG.BASE_URL}/air_pollution`, {
             lat: lat.toString(),
             lon: lon.toString(),
             appid: import.meta.env.VITE_OPENWEATHER_API_KEY
         });
-        return this.fetchData<UVIndexData>(url);
+        return this.fetchData<AQIData>(url);
     }
 
-    async getUVIndex({lat, lon}: Coordinates) {
-        const url = this.createUrl(`https://api.openweathermap.org/data/2.5/uvi`, {
+    async getUVIndex({lat, lon}: Coordinates): Promise<UVIndexData> {
+        const url = this.createUrl("https://api.openweathermap.org/data/2.5/uvi", {
             lat: lat.toString(),
             lon: lon.toString(),
             appid: import.meta.env.VITE_OPENWEATHER_API_KEY
@@ -28,7 +20,7 @@ class WeatherAPI{
         return this.fetchData<UVIndexData>(url);
     }
 
-    async getPollen({lat, lon}: Coordinates) {
+    async getPollen({lat, lon}: Coordinates): Promise<PollenData> {
         return Promise.resolve({
             coord: { lat, lon },
             pollen_types: [
