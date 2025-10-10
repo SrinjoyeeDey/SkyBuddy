@@ -11,6 +11,7 @@ import WeatherDetails from "@/components/weather-details";
 import WeatherForecast from "@/components/weather-forecast";
 import FavoriteCities from "@/components/favorite-cities";
 import HealthRecommendations from "@/components/healthRecommendations";
+import PersonalizedRecommendations from "@/components/personalized-recommendations";
 import WeatherPlaylists from "@/components/weather-playlist";
 
 const WeatherDashboard = () => {
@@ -101,6 +102,14 @@ const WeatherDashboard = () => {
 
       {/* Health Recommendations */}
       <HealthRecommendations aqi={aqi} uv={uv} pollen={pollen} />
+
+      {/* AI-Powered Personalized Recommendations (rule-based for now) */}
+      <PersonalizedRecommendations 
+        weather={weatherQuery.data}
+        forecast={forecastQuery.data}
+        aqi={aqi}
+        uv={uv}
+      />
 
       <div className="grid gap-6">
         <div className="flex flex-col lg:flex-row gap-4">
