@@ -11,6 +11,7 @@ import WeatherDetails from "@/components/weather-details";
 import WeatherForecast from "@/components/weather-forecast";
 import FavoriteCities from "@/components/favorite-cities";
 import HealthRecommendations from "@/components/healthRecommendations";
+import WeatherPlaylists from "@/components/weather-playlist";
 
 const WeatherDashboard = () => {
   const {coordinates,error:locationError,getLocation,isLoading:locationLoading}=useGeolocation();
@@ -118,6 +119,7 @@ const WeatherDashboard = () => {
         {/* forecast */}
         <WeatherForecast data={forecastQuery.data} />
       </div>
+      <WeatherPlaylists data={weatherQuery.data} />
     </div>
   );
 }
