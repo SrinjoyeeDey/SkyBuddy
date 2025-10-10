@@ -72,16 +72,11 @@
   background-size: 400% 400%;
   background-repeat: no-repeat;
   will-change: background-position, opacity, filter;
-  /* two animations: motion + crossfade */
   animation:
-    gradientMove 36s linear infinite,
-    crossFade 36s linear infinite;
-  /* slightly lighten so overlay blends nicely */
+    gradientMove 30s linear infinite,
+    crossFade 30s linear infinite;
   mix-blend-mode: screen;
 }
-
-/* shift each layer's timing so permutations crossfade one after another */
-/* animation-delay = (index * duration/6) so each covers an equal slice */
 .grad-layer:nth-child(1) { animation-delay: 0s, 0s; }
 .grad-layer:nth-child(2) { animation-delay: 6s, 6s; }
 .grad-layer:nth-child(3) { animation-delay: 12s, 12s; }
@@ -89,7 +84,6 @@
 .grad-layer:nth-child(5) { animation-delay: 24s, 24s; }
 .grad-layer:nth-child(6) { animation-delay: 30s, 30s; }
 
-/* Gentle drifting motion of background-position so bands slide continuously */
 @keyframes gradientMove {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 40%; }
@@ -613,31 +607,19 @@
   animation: content-sway-3 1000ms cubic-bezier(.22,.9,.35,1) both;
 }
 
-/* ------------------------
-   Snow only (transparent background) + enhanced visibility
-   Paste into your global CSS (app.css)
-   ------------------------ */
 
-/* container now has no gradient — it's transparent by default */
-
-/* Snowflake appearance + fall animation */
 .snowflake {
-  top: -12vh; /* start above the top */
+  top: -12vh;
   will-change: transform, opacity;
-  /* brighter, more visible white */
   background: rgba(255, 255, 255, 0.95);
-  /* stronger soft glow so flakes pop on any background */
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(0,0,0,0.15);
   border-radius: 50%;
-  /* smooth linear falling motion controlled by 'fall' keyframes */
   animation-name: fall;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  /* prevent subpixel blurring as much as possible */
   transform-origin: center;
 }
 
-/* Vertical fall + horizontal sway + rotation */
 @keyframes fall {
   0% {
     transform: translateY(-12vh) translateX(0px) rotate(0deg) scale(1);
@@ -661,10 +643,8 @@
   }
 }
 
-/* Optional: make larger screens slightly larger flakes (tweak if needed) */
 @media (min-width: 1024px) {
   .snowflake {
-    /* no forced change — sizes are inline — but can scale up slightly */
     transform-origin: center;
   }
 }

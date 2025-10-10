@@ -2,7 +2,6 @@ import React from "react";
 
 export default function SunWrapper({ children }: any) {
   const gradients = [
-    // permutations (color stops order)
     "linear-gradient(120deg, #fff59d 0%, #ffc107 50%, #ff3b30 100%)", // Y O R
     "linear-gradient(120deg, #fff59d 0%, #ff3b30 50%, #ffc107 100%)", // Y R O
     "linear-gradient(120deg, #ffc107 0%, #fff59d 50%, #ff3b30 100%)", // O Y R

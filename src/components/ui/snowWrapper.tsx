@@ -1,4 +1,10 @@
+import React from "react";
+import { useTheme } from "@/context/theme-provider";
+
 const SnowWrapper = ({ children }: any) => {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
+
   // change this number to control density
   const snowflakes = Array.from({ length: 60 });
 
@@ -25,6 +31,14 @@ const SnowWrapper = ({ children }: any) => {
                 animationDuration: `${duration}s`,
                 opacity,
                 ["--sway" as any]: `${sway}px`,
+                /* dynamic color: for light theme use blue-to-white gradient, otherwise keep white */
+                background: isLight
+                  ? "linear-gradient(180deg, #a0cfff 0%, #ffffff 100%)"
+                  : "rgba(255, 255, 255, 0.95)",
+                /* tweak glow so blue flakes are visible on light bg */
+                boxShadow: isLight
+                  ? "linear-gradient(180deg, #3b82f6 0%, #93c5fd 100%)"
+                  : "0 0 10px rgba(255,255,255,0.9), 0 1px 3px rgba(0,0,0,0.15)",
               }}
             />
           );
