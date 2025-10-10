@@ -48,3 +48,33 @@ export function useLocationSearch(query:string){
 
     })
 }
+
+export const HEALTH_KEYS = {
+    aqi: (coords: Coordinates) => ['aqi', coords] as const,
+    uv: (coords: Coordinates) => ['uv', coords] as const,
+    pollen: (coords: Coordinates) => ['pollen', coords] as const,
+};
+
+export function useAQIQuery(coordinates: Coordinates | null) {
+    return useQuery({
+        queryKey: HEALTH_KEYS.aqi(coordinates ?? { lat: 0, lon: 0 }),
+        queryFn: () => coordinates ? weatherAPI.getAQI(coordinates) : null,
+        enabled: !!coordinates,
+    });
+}
+
+export function useUVIndexQuery(coordinates: Coordinates | null) {
+    return useQuery({
+        queryKey: HEALTH_KEYS.uv(coordinates ?? { lat: 0, lon: 0 }),
+        queryFn: () => coordinates ? weatherAPI.getUVIndex(coordinates) : null,
+        enabled: !!coordinates,
+    });
+}
+
+export function usePollenQuery(coordinates: Coordinates | null) {
+    return useQuery({
+        queryKey: HEALTH_KEYS.pollen(coordinates ?? { lat: 0, lon: 0 }),
+        queryFn: () => coordinates ? weatherAPI.getPollen(coordinates) : null,
+        enabled: !!coordinates,
+    });
+}

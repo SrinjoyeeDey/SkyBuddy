@@ -38,11 +38,12 @@ const CurrentWeather = ({ data, locationName, isLoading }: CurrentWeatherProps) 
             <div className="space-y-2">
               <div className="flex items-end gap-1">
                 <h2 className="text-2xl font-bold tracking-tighter">
-                  {locationName?.name }
+                  {locationName?.name || data?.name}
                 </h2>
                 {locationName?.state && <span className="text-muted-foreground">, {locationName.state}</span>}
+                {!locationName?.state && data?.sys?.country && <span className="text-muted-foreground">, {data.sys.country}</span>}
               </div>
-              <p className="text-sm text-muted-foreground">{locationName?.country }</p>
+              <p className="text-sm text-muted-foreground">{locationName?.country || data?.sys?.country}</p>
             </div>
 
             <div className="flex items-center gap-2">
