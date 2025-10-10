@@ -1,5 +1,5 @@
 import { API_CONFIG } from "./config"
-import type { Coordinates, ForecastData, GeocodingResponse, WeatherData } from "./types";
+import type { AQIData, Coordinates, ForecastData, GeocodingResponse, WeatherData } from "./types";
 
 type UVIndexData = {
     lat: number;
@@ -16,7 +16,7 @@ class WeatherAPI{
             lon: lon.toString(),
             appid: import.meta.env.VITE_OPENWEATHER_API_KEY
         });
-        return this.fetchData<UVIndexData>(url);
+        return this.fetchData<AQIData>(url);
     }
 
     async getUVIndex({lat, lon}: Coordinates) {
