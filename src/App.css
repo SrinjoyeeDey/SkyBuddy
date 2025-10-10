@@ -396,158 +396,51 @@
 
 .cloud {
   position: absolute;
-  width: 240px;               
-  height: 80px;
-  background: rgba(255,255,255,0.95);
-  border-radius: 9999px;
-  filter: blur(0.6px);
-  box-shadow: 0 10px 30px rgba(6,18,30,0.12), inset 0 -6px 18px rgba(0,0,0,0.03);
-  transform-origin: center;
-  
-  animation-name: cloud-drift, cloud-bob;
-  animation-timing-function: linear, ease-in-out;
-  animation-iteration-count: infinite, infinite;
-  
-  animation-duration: var(--cloud-duration, 40s), 6s;
-  animation-delay: var(--cloud-delay, 0s);
+  width: 160px;
+  height: 60px;
+  border-radius: 50px;
+  background: #d9d9d9;
+  animation: drift 60s linear infinite;
   will-change: transform, opacity;
 }
-
 
 .cloud::before,
 .cloud::after {
   content: "";
   position: absolute;
   background: inherit;
-  border-radius: 9999px;
-  width: 60%;
-  height: 95%;
-  top: -18%;
-  left: 8%;
-  box-shadow: inherit;
-  transform-origin: left center;
+  border-radius: 50%;
+}
+
+.cloud::before {
+  width: 70px;
+  height: 70px;
+  top: -25px;
+  left: 15px;
 }
 
 .cloud::after {
-  left: auto;
-  right: 6%;
-  width: 56%;
-  top: -14%;
-  transform-origin: right center;
+  width: 90px;
+  height: 90px;
+  top: -40px;
+  right: 20px;
 }
 
-
-.cloud-back {
-  filter: blur(1.2px) saturate(0.9) brightness(1.03);
-  opacity: 0.75;
-  animation-duration: calc(var(--cloud-duration, 40s) * 1.25), 8s; 
-  animation-delay: var(--cloud-delay, 0s);
-}
-
-.cloud-mid {
-  filter: blur(0.8px) saturate(0.98);
-  animation-duration: var(--cloud-duration, 40s), 6.5s;
-}
-
-.cloud-front {
-  filter: blur(0.2px) saturate(1.05);
-  animation-duration: calc(var(--cloud-duration, 40s) * 0.78), 5.6s;
-}
-
-
-@keyframes cloud-drift {
+@keyframes drift {
   0% {
-    transform: translateX(-30vw) scale(1);
-    opacity: 0;
-  }
-  6% {
-    opacity: 1;
-  }
-  92% {
-    transform: translateX(110vw) scale(1);
-    opacity: 0.95;
+    transform: translateX(-250px);
+    opacity: 0.35;
   }
   100% {
-    transform: translateX(130vw) scale(1);
-    opacity: 0;
+    transform: translateX(120vw);
+    opacity: 0.35;
   }
 }
 
-
-@keyframes cloud-bob {
-  0% { transform: translateY(0); }
-  25% { transform: translateY(-6px); }
-  50% { transform: translateY(0); }
-  75% { transform: translateY(5px); }
-  100% { transform: translateY(0); }
-}
-
-
-.gusting .cloud {
-  
-  animation-duration: calc(var(--cloud-duration, 40s) * 0.45), 3.2s !important;
-  transform-origin: center top;
-  transition: filter 300ms ease;
-}
-
-
-.gusting .cloud-front {
-  transform: rotate(-2deg) scale(1.02);
-}
-
-
-.wind-sway {
-  animation: content-sway 900ms ease-in-out;
-}
-
-@keyframes content-sway {
-  0% { transform: translateX(0) translateY(0); }
-  20% { transform: translateX(-8px) translateY(-3px) rotate(-0.3deg); }
-  50% { transform: translateX(6px) translateY(0); }
-  80% { transform: translateX(-4px) translateY(1px) rotate(0.2deg); }
-  100% { transform: translateX(0) translateY(0); }
-}
-
-
-.wind-lines {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(90deg, rgba(255,255,255,0.03) 0.5px, transparent 0.5px);
-  background-size: 140px 100%;
-  opacity: 0.0;
-  animation: wind-lines-fade 1.2s linear infinite;
-}
-
-
-.gusting .wind-lines {
-  opacity: 0.9;
-  animation: wind-lines-move 1s linear infinite;
-  background-image:
-    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, rgba(255,255,255,0) 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, rgba(255,255,255,0) 1px);
-  background-size: 220px 100%, 90px 100%;
-  mix-blend-mode: screen;
-}
-
-
-@keyframes wind-lines-move {
-  0% { background-position: 0 0, 0 0; }
-  100% { background-position: -600px 0, -300px 0; }
-}
-
-
-@media (prefers-reduced-motion: reduce) {
-  .cloud { animation: none !important; }
-  .wind-sway { animation: none !important; }
-  .wind-lines { animation: none !important; opacity: 0.2 !important; }
-}
-
-
-@media (max-width: 420px) {
-  .cloud { width: 160px; height: 56px; }
-  .cloud::before, .cloud::after { width: 56%; height: 92%; top: -14%; }
+@media (min-width: 1024px) {
+  .cloud {
+    filter: blur(1px);
+  }
 }
 
 @keyframes sky-shift {
