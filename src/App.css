@@ -56,52 +56,152 @@
     }
     
 
-    .sun-overlay {
-background: linear-gradient( to bottom left,
-rgba(255,255,255,0.06) 0%,
-rgba(255,247,140,0.08) 30%,
-rgba(255,183,77,0.10) 60%,
-rgba(255,112,67,0.06) 100%
-);
-opacity: 0.95; 
-mix-blend-mode: screen;
-transform-origin: top right;
-animation: overlay-drift 6s ease-in-out infinite alternate;
+.sun-wrapper {
+  --sun-size: 7rem;
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
 }
 
+.gradients { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 
-.sun {
-background: radial-gradient(circle at 30% 30%,
-#fff59d 0%, 
-#ffe082 15%,
-#ffc107 35%,
-#ff8a65 60%,
-#ff5722 100%);
-box-shadow: 0 0 60px 24px rgba(255,160,64,0.08), 0 8px 24px rgba(255,150,50,0.06);
-animation: sun-pulse 6s ease-in-out infinite;
-filter: saturate(1.02);
+.grad-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background-size: 400% 400%;
+  background-repeat: no-repeat;
+  will-change: background-position, opacity, filter;
+  /* two animations: motion + crossfade */
+  animation:
+    gradientMove 36s linear infinite,
+    crossFade 36s linear infinite;
+  /* slightly lighten so overlay blends nicely */
+  mix-blend-mode: screen;
 }
 
+/* shift each layer's timing so permutations crossfade one after another */
+/* animation-delay = (index * duration/6) so each covers an equal slice */
+.grad-layer:nth-child(1) { animation-delay: 0s, 0s; }
+.grad-layer:nth-child(2) { animation-delay: 6s, 6s; }
+.grad-layer:nth-child(3) { animation-delay: 12s, 12s; }
+.grad-layer:nth-child(4) { animation-delay: 18s, 18s; }
+.grad-layer:nth-child(5) { animation-delay: 24s, 24s; }
+.grad-layer:nth-child(6) { animation-delay: 30s, 30s; }
 
-@keyframes sun-pulse {
-0% { transform: scale(1) translateZ(0); }
-50% { transform: scale(1.02) translate(-2px, 1px); }
-100% { transform: scale(1) translateZ(0); }
+/* Gentle drifting motion of background-position so bands slide continuously */
+@keyframes gradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 40%; }
+  100% { background-position: 0% 60%; }
 }
 
-
-@keyframes overlay-drift {
-0% { transform: translate(0px, 0px) rotate(0.01deg); }
-100% { transform: translate(-8px, 6px) rotate(0.03deg); }
+@keyframes crossFade {
+  0%   { opacity: 0; }
+  6%   { opacity: 1; }     
+  22%  { opacity: 1; }     
+  28%  { opacity: 0; }     
+  100% { opacity: 0; }
 }
 
+.sun-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  background: linear-gradient(
+    to bottom left,
+    rgba(255,255,255,0.06) 0%,
+    rgba(255,247,140,0.04) 30%,
+    rgba(255,183,77,0.03) 60%,
+    rgba(255,112,67,0.02) 100%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: overlayDrift 40s linear infinite;
+  will-change: transform;
+}
+@keyframes overlayDrift {
+  0%   { transform: translate(0px, 0px) rotate(0deg); }
+  100% { transform: translate(-18px, 10px) rotate(0.6deg); }
+}
 
-.sun-overlay, .sun { pointer-events: none; }
+.sun-outer {
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  transform: translate(140%, -140%) scale(0.85);
+  animation: sunEnter 1.8s cubic-bezier(0.22,1,0.36,1) forwards;
+  pointer-events: none;
+  will-change: transform;
+}
+@keyframes sunEnter {
+  0% { transform: translate(160%,-160%) scale(0.7); opacity: 0; }
+  65% { transform: translate(-6%,6%) scale(1.06); opacity: 1; }
+  100% { transform: translate(0,0) scale(1); opacity: 1; }
+}
 
+.sun-core {
+  width: var(--sun-size);
+  height: var(--sun-size);
+  border-radius: 9999px;
+  position: relative;
+  background: radial-gradient(circle at 30% 30%,
+    #fff59d 0%, #ffe082 12%, #ffc107 32%, #ff8a65 62%, #ff5722 100%);
+  box-shadow: 0 0 40px 12px rgba(255,144,48,0.12), 0 10px 30px -8px rgba(255,112,67,0.22);
+  filter: saturate(1.06);
+  transform-origin: center;
+  animation: sunSpin 12s linear infinite;
+  pointer-events: none;
+  will-change: transform, filter;
+}
+@keyframes sunSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.sun-core::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  border-radius: 50%;
+  z-index: -1;
+  background: radial-gradient(circle, rgba(255,160,64,0.18) 0%, rgba(255,120,48,0.06) 35%, rgba(255,100,40,0.00) 70%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+.sun-core::after {
+  content: "";
+  position: absolute;
+  left: -8%;
+  top: -8%;
+  width: 116%;
+  height: 116%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(255,200,120,0.05), rgba(255,120,48,0.00) 30%, rgba(255,200,120,0.04) 60%, rgba(255,120,48,0.00) 100%);
+  mix-blend-mode: screen;
+  filter: blur(8px);
+  transform-origin: center;
+  animation: raysRotate 80s linear infinite;
+  pointer-events: none;
+}
+@keyframes raysRotate { from { transform: rotate(0deg) scale(1); } to { transform: rotate(360deg) scale(1); } }
 
 @media (max-width: 420px) {
-.sun { width: 6rem; height: 6rem; }
+  :root { --sun-size: 6rem; }
+  .sun-outer { top: 0.75rem; right: 0.75rem; }
 }
+@media (min-width: 1024px) {
+  :root { --sun-size: 8.5rem; }
+  .sun-outer { top: 1.25rem; right: 1.25rem; }
+}
+
+.gradients,
+.grad-layer,
+.sun-overlay,
+.sun-outer,
+.sun-core,
+.sun-core::before,
+.sun-core::after {
+  pointer-events: none;
+}
+
 
 .animate-drop {
   animation-name: drop;
@@ -511,4 +611,60 @@ filter: saturate(1.02);
 }
 .wind-sway-3 {
   animation: content-sway-3 1000ms cubic-bezier(.22,.9,.35,1) both;
+}
+
+/* ------------------------
+   Snow only (transparent background) + enhanced visibility
+   Paste into your global CSS (app.css)
+   ------------------------ */
+
+/* container now has no gradient — it's transparent by default */
+
+/* Snowflake appearance + fall animation */
+.snowflake {
+  top: -12vh; /* start above the top */
+  will-change: transform, opacity;
+  /* brighter, more visible white */
+  background: rgba(255, 255, 255, 0.95);
+  /* stronger soft glow so flakes pop on any background */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(0,0,0,0.15);
+  border-radius: 50%;
+  /* smooth linear falling motion controlled by 'fall' keyframes */
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* prevent subpixel blurring as much as possible */
+  transform-origin: center;
+}
+
+/* Vertical fall + horizontal sway + rotation */
+@keyframes fall {
+  0% {
+    transform: translateY(-12vh) translateX(0px) rotate(0deg) scale(1);
+    opacity: 0.95;
+  }
+  20% {
+    transform: translateY(18vh) translateX(calc(var(--sway) * 0.4)) rotate(40deg) scale(1.02);
+  }
+  40% {
+    transform: translateY(42vh) translateX(calc(var(--sway) * -0.6)) rotate(120deg) scale(0.98);
+  }
+  60% {
+    transform: translateY(72vh) translateX(calc(var(--sway) * 0.6)) rotate(200deg) scale(1.01);
+  }
+  80% {
+    transform: translateY(98vh) translateX(calc(var(--sway) * -0.3)) rotate(280deg) scale(0.99);
+  }
+  100% {
+    transform: translateY(112vh) translateX(calc(var(--sway) * 0.1)) rotate(360deg) scale(0.95);
+    opacity: 0.18;
+  }
+}
+
+/* Optional: make larger screens slightly larger flakes (tweak if needed) */
+@media (min-width: 1024px) {
+  .snowflake {
+    /* no forced change — sizes are inline — but can scale up slightly */
+    transform-origin: center;
+  }
 }

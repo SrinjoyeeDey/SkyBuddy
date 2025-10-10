@@ -1,20 +1,22 @@
 const SnowWrapper = ({ children }: any) => {
-  const snowflakes = Array.from({ length: 40 });
+  // change this number to control density
+  const snowflakes = Array.from({ length: 60 });
 
   return (
-    <div className="relative overflow-hidden w-full h-full flex-1 bg-gradient-to-b from-[#f0f9ff] via-[#e0f7ff] to-[#ffffff]">
-      <div className="absolute inset-0 pointer-events-none -z-10">
+    <div className="relative w-full h-full flex-1 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none z-0">
         {snowflakes.map((_, i) => {
           const left = Math.random() * 100;
-          const delay = Math.random() * 5;
-          const duration = 6 + Math.random() * 6;
-          const size = 4 + Math.random() * 6;
-          const opacity = 0.4 + Math.random() * 0.6;
+          const delay = -(Math.random() * 20);
+          const duration = 8 + Math.random() * 14;
+          const size = 4 + Math.random() * 12;
+          const opacity = 0.45 + Math.random() * 0.55;
+          const sway = Math.round((Math.random() * 40 - 20)); 
 
           return (
             <span
               key={i}
-              className="absolute rounded-full bg-white opacity-80 animate-snow"
+              className="snowflake absolute rounded-full"
               style={{
                 left: `${left}%`,
                 width: `${size}px`,
@@ -22,12 +24,14 @@ const SnowWrapper = ({ children }: any) => {
                 animationDelay: `${delay}s`,
                 animationDuration: `${duration}s`,
                 opacity,
+                ["--sway" as any]: `${sway}px`,
               }}
             />
           );
         })}
       </div>
-      {children}
+
+      <div className="relative z-10">{children}</div>
     </div>
   );
 };

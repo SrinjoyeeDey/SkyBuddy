@@ -81,7 +81,6 @@ const WeatherDashboard = () => {
   }
 
 
-  // Extract AQI, UV, and pollen values for health recommendations
   const aqi = aqiQuery.data?.list?.[0]?.main?.aqi;
   const uv = uvQuery.data?.value;
   const pollen = pollenQuery.data?.pollen_types;
@@ -100,7 +99,6 @@ const WeatherDashboard = () => {
         </Button>
       </div>
 
-      {/* Health Recommendations */}
       <HealthRecommendations aqi={aqi} uv={uv} pollen={pollen} />
 
       <div className="grid gap-6">
@@ -115,11 +113,10 @@ const WeatherDashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 items-start">
-        {/* details */}
         <WeatherDetails data={weatherQuery.data} />
-        {/* forecast */}
         <WeatherForecast data={forecastQuery.data} />
       </div>
+    </div>
     </div>
   );
 }
