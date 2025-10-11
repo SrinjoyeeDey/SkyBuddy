@@ -2,6 +2,7 @@ import type { ForecastData } from "@/api/types"
 import { Card, CardContent,  CardHeader, CardTitle } from "./ui/card"
 import {Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts'
 import {format} from 'date-fns'
+import RainWrapper from "./ui/rainWrapper"
 
 interface HourlyTempProps{
     data:ForecastData
@@ -31,7 +32,7 @@ const HourlyTemp = ({ data }: HourlyTempProps) => {
     }));
 
     return (
-        <Card className="flex-1">
+        <Card className="flex-1 bg-transparent">
             <CardHeader>
                 <CardTitle>Today's Temperature</CardTitle>
             </CardHeader>
