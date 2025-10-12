@@ -2,6 +2,7 @@ import { ExternalLink, Music2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import type { SpotifyPlaylist } from '@/types/playlist';
 import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface PlaylistCardProps {
   playlist: SpotifyPlaylist;
@@ -10,13 +11,23 @@ interface PlaylistCardProps {
 const PlaylistCard = ({ playlist }: PlaylistCardProps) => {
   const [imageError, setImageError] = useState(false);
 
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Try to get mood from search params, fallback to undefined
+  const mood = searchParams.get('mood') || undefined;
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Navigate to /music?mood=...&playlist=...
+    navigate(`/music?mood=${encodeURIComponent(mood || '')}&playlist=${encodeURIComponent(playlist.id)}`);
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
       <CardContent className="p-0">
         <a 
-          href={playlist.spotifyUrl} 
-          target="_blank" 
-          rel="noopener noreferrer"
+          href="#"
+          onClick={handleCardClick}
           className="block"
         >
           {/* Playlist Image - Smaller with fallback */}

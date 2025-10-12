@@ -33,3 +33,5 @@ export interface WeatherPlaylistMapping {
   playlists: SpotifyPlaylist[];
   description: string;
 }
+
+export type Playlist = SpotifyPlaylist;

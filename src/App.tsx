@@ -1,5 +1,6 @@
 import './App.css';
 import {BrowserRouter,Route,Routes} from 'react-router-dom'
+import MusicPage from './pages/music-page';
 import Layout from './components/layout'
 
 import { ThemeProvider } from './context/theme-provider';
@@ -30,6 +31,7 @@ function App(){
           <Routes>
             <Route  path='/' element={<WeatherDashboard />}/>
             <Route  path='/city/:cityName' element={<CityPage />}/>
+            <Route  path='/music' element={<MusicPage />}/>
           </Routes>
         </Layout>
         <Toaster richColors/>
