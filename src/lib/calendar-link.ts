@@ -1,7 +1,7 @@
 // src/lib/calendar-link.ts
 import type { DailyForecast } from './suggestion-engine';
 
-// Helper function to format a Date object into the string Google Calendar needs (e.g., "20251013T130000Z")
+// Helper function to format a Date object into the string Google Calendar needs
 const formatTimeForGoogle = (date: Date): string => {
   return date.toISOString().replace(/-|:|\.\d+/g, '');
 };
@@ -27,7 +27,7 @@ export const generateSuggestedEventLink = (suggestion: string, day: DailyForecas
 };
 
 /**
- * Generates a link to add a custom event to Google Calendar.
+ * Generates a link to add a custom event to Google Calendar at a specific time.
  */
 export const generateCustomEventLink = (title: string, date: Date): string => {
     const startTime = new Date(date);
@@ -40,3 +40,4 @@ export const generateCustomEventLink = (title: string, date: Date): string => {
 
     return url.toString();
 }
+

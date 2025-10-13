@@ -1,5 +1,4 @@
-// src/components/UnifiedPlannerView.tsx
-import { useState } from 'react'; // 1. IMPORT useState AND ChangeEvent TYPE FROM REACT
+import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import type { ForecastData, ForecastListItem } from "@/api/types";
 import { useCalendarEvents } from "@/hooks/use-calendar";
@@ -8,37 +7,37 @@ import { getActivitySuggestion } from "@/lib/suggestion-engine";
 import { generateSuggestedEventLink, generateCustomEventLink } from "@/lib/calendar-link";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { Input } from "@/components/ui/input"; // 2. CORRECT THE IMPORT PATH FOR INPUT
+import { Input } from "@/components/ui/input";
 import { SignOutButton } from "./ui/SignOutButton";
+import { RefreshCcw } from 'lucide-react'; // 1. IMPORT THE REFRESH ICON
 
 interface UnifiedPlannerViewProps {
   forecastData: ForecastData;
 }
 
-// Helper to format date as "Monday, Oct 13"
 const formatFullDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+    return new Date(timestamp * 1000).toLocaleString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 }
 
 export const UnifiedPlannerView = ({ forecastData }: UnifiedPlannerViewProps) => {
   const accessToken = localStorage.getItem('google_access_token');
-  const { data: events, isLoading } = useCalendarEvents(accessToken);
-  const [customEventTitle, setCustomEventTitle] = useState('');
-  const [customEventDate, setCustomEventDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
+  // 2. GET THE REFETCH FUNCTION and isFetching state from the hook
+  const { data: events, isLoading, refetch, isFetching } = useCalendarEvents(accessToken);
 
-  // Get daily forecasts
+  const [customEventTitle, setCustomEventTitle] = useState('');
+  const [customEventDate, setCustomEventDate] = useState(new Date().toISOString().split('T')[0]);
+  const [customEventTime, setCustomEventTime] = useState('13:00');
+
   const dailyForecasts: DailyForecast[] = forecastData.list
     .filter((item: ForecastListItem) => item.dt_txt.includes("12:00:00"))
     .slice(0, 5);
 
-  // Combine your events and suggestions
   const combinedItems = dailyForecasts.map(day => {
     const date = new Date(day.dt * 1000).toDateString();
     const eventsForDay = events?.filter((event: any) =>
       new Date(event.start.dateTime || event.start.date).toDateString() === date
     );
     const suggestion = getActivitySuggestion(day);
-
     return {
       date: day.dt,
       events: eventsForDay || [],
@@ -50,8 +49,9 @@ export const UnifiedPlannerView = ({ forecastData }: UnifiedPlannerViewProps) =>
   });
 
   const handleAddCustomEvent = () => {
-    if (!customEventTitle || !customEventDate) return;
-    const link = generateCustomEventLink(customEventTitle, new Date(customEventDate));
+    if (!customEventTitle || !customEventDate || !customEventTime) return;
+    const dateTimeString = `${customEventDate}T${customEventTime}`;
+    const link = generateCustomEventLink(customEventTitle, new Date(dateTimeString));
     window.open(link, '_blank');
     setCustomEventTitle('');
   };
@@ -62,25 +62,22 @@ export const UnifiedPlannerView = ({ forecastData }: UnifiedPlannerViewProps) =>
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>🗓️ Personal Planner</CardTitle>
-        <SignOutButton />
+        <div className="flex items-center gap-2">
+            {/* 3. ADD THE REFRESH BUTTON */}
+            <Button variant="ghost" size="icon" onClick={() => refetch()} disabled={isFetching}>
+                <RefreshCcw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+            </Button>
+            <SignOutButton />
+        </div>
       </CardHeader>
       <CardContent>
         {/* Custom Event Form */}
         <div className="p-4 mb-4 border rounded-lg">
             <h4 className="font-semibold text-sm mb-2">Add a Custom Event</h4>
-            <div className="flex gap-2">
-                <Input
-                    type="text"
-                    placeholder="Event title..."
-                    value={customEventTitle}
-                    // 3. ADD THE CORRECT TYPE FOR THE EVENT 'e'
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomEventTitle(e.target.value)}
-                />
-                <Input
-                    type="date"
-                    value={customEventDate}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomEventDate(e.target.value)}
-                />
+            <div className="flex flex-wrap gap-2">
+                <Input type="text" placeholder="Event title..." className="flex-grow min-w-[150px]" value={customEventTitle} onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomEventTitle(e.target.value)} />
+                <Input type="date" className="w-auto" value={customEventDate} onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomEventDate(e.target.value)} />
+                <Input type="time" className="w-auto" value={customEventTime} onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomEventTime(e.target.value)} />
                 <Button onClick={handleAddCustomEvent}>Add</Button>
             </div>
         </div>
@@ -101,6 +98,7 @@ export const UnifiedPlannerView = ({ forecastData }: UnifiedPlannerViewProps) =>
                     <a href={item.suggestion.addLink} target="_blank" rel="noopener noreferrer">
                       + Add to Calendar
                     </a>
+
                   </Button>
                 </li>
               </ul>
