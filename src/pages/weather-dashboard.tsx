@@ -12,6 +12,8 @@ import WeatherForecast from "@/components/weather-forecast";
 import FavoriteCities from "@/components/favorite-cities";
 import HealthRecommendations from "@/components/healthRecommendations";
 import WeatherPlaylists from "@/components/weather-playlist";
+import { CalendarConnect } from '../components/ui/CalendarConnect';
+import { UpcomingEvents } from '../components/UpcomingEvents';
 
 const WeatherDashboard = () => {
   const {coordinates,error:locationError,getLocation,isLoading:locationLoading}=useGeolocation();
@@ -24,6 +26,9 @@ const WeatherDashboard = () => {
   const aqiQuery = useAQIQuery(coordinates);
   const uvQuery = useUVIndexQuery(coordinates);
   const pollenQuery = usePollenQuery(coordinates);
+
+  // ADD THIS LINE to check if the user is logged in
+    const hasCalendarToken = !!localStorage.getItem('google_access_token');
 
   console.log(weatherQuery.data)
 
@@ -101,6 +106,11 @@ const WeatherDashboard = () => {
 
       {/* Health Recommendations */}
       <HealthRecommendations aqi={aqi} uv={uv} pollen={pollen} />
+
+      <div className="pt-2">
+              {hasCalendarToken ? <UpcomingEvents /> : <CalendarConnect />}
+            </div>
+
 
       <div className="grid gap-6">
         <div className="flex flex-col lg:flex-row gap-4">
