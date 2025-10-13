@@ -12,33 +12,26 @@ import WeatherForecast from "@/components/weather-forecast";
 import FavoriteCities from "@/components/favorite-cities";
 import HealthRecommendations from "@/components/healthRecommendations";
 import WeatherPlaylists from "@/components/weather-playlist";
-import { CalendarConnect } from '../components/ui/CalendarConnect';
-import { UpcomingEvents } from '../components/UpcomingEvents';
-import { ActivitySuggestions } from '@/components/ActivitySuggestions';
+import { PersonalPlanner } from "@/components/PersonalPlanner";
 
 const WeatherDashboard = () => {
   const {coordinates,error:locationError,getLocation,isLoading:locationLoading}=useGeolocation();
 
   const locationQuery=useReverseGeocodeQuery(coordinates);
-  console.log('Reverse geocode data:', locationQuery.data);
-
   const weatherQuery = useWeatherQuery(coordinates);
   const forecastQuery = useForecastQuery(coordinates);
   const aqiQuery = useAQIQuery(coordinates);
   const uvQuery = useUVIndexQuery(coordinates);
   const pollenQuery = usePollenQuery(coordinates);
 
-  // ADD THIS LINE to check if the user is logged in
-    const hasCalendarToken = !!localStorage.getItem('google_access_token');
-
-  console.log(weatherQuery.data)
-
   const handleRefresh=()=>{
     getLocation();
   };
+
   if(locationLoading){
-     return <WeatherSkeleton />
+    return <WeatherSkeleton />
   }
+
   if(locationError){
     return <Alert variant="destructive">
       <AlertTriangle className="h-4 w-4" />
@@ -46,7 +39,7 @@ const WeatherDashboard = () => {
       <AlertDescription className="flex flex-col gap-4">
         <p>{locationError}</p>
         <Button onClick={getLocation} variant={'outline'} className="w-fit">
-           <MapPin className="mr-2 h-4 w-4" />
+          <MapPin className="mr-2 h-4 w-4" />
           Enable Location
         </Button>
       </AlertDescription>
@@ -75,7 +68,7 @@ const WeatherDashboard = () => {
       <AlertDescription className="flex flex-col gap-4">
         <p>Failed to fetch weather data. Please try again.</p>
         <Button onClick={handleRefresh} variant={'outline'} className="w-fit">
-           <RefreshCcw className="mr-2 h-4 w-4" />
+          <RefreshCcw className="mr-2 h-4 w-4" />
           Retry
         </Button>
       </AlertDescription>
@@ -87,8 +80,6 @@ const WeatherDashboard = () => {
     return <WeatherSkeleton />
   }
 
-
-  // Extract AQI, UV, and pollen values for health recommendations
   const aqi = aqiQuery.data?.list?.[0]?.main?.aqi;
   const uv = uvQuery.data?.value;
   const pollen = pollenQuery.data?.pollen_types;
@@ -105,13 +96,7 @@ const WeatherDashboard = () => {
         </Button>
       </div>
 
-      {/* Health Recommendations */}
       <HealthRecommendations aqi={aqi} uv={uv} pollen={pollen} />
-
-      <div className="pt-2">
-              {hasCalendarToken ? <UpcomingEvents /> : <CalendarConnect />}
-            </div>
-
 
       <div className="grid gap-6">
         <div className="flex flex-col lg:flex-row gap-4">
@@ -125,12 +110,12 @@ const WeatherDashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 items-start">
-        {/* details */}
         <WeatherDetails data={weatherQuery.data} />
-        {/* forecast */}
         <WeatherForecast data={forecastQuery.data} />
       </div>
-      {forecastQuery.data && <ActivitySuggestions data={forecastQuery.data} />}
+
+      {forecastQuery.data && <PersonalPlanner forecastData={forecastQuery.data} />}
+
       <WeatherPlaylists data={weatherQuery.data} />
     </div>
   );
