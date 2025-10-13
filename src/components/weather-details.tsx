@@ -2,6 +2,7 @@ import type { WeatherData } from "@/api/types"
 import{ format } from "date-fns";
 import { Compass, Gauge, Sunrise, Sunset } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import RainWrapper from "./ui/rainWrapper";
 
 interface WeatherDetailsProps {
   data:WeatherData;
@@ -47,7 +48,7 @@ const WeatherDetails = ({data}:WeatherDetailsProps) => {
     
   ]
   return (
-    <Card>
+    <Card className="bg-transparent">
       <CardHeader>
         <CardTitle>Weather Details</CardTitle>
       </CardHeader>
