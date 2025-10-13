@@ -94,3 +94,14 @@ export interface GeocodingResponse {
     country:string;
     state?:string;
 }
+export interface ForecastListItem {
+  dt: number;
+  dt_txt: string;
+  main: {
+    temp: number;
+  };
+  weather: {
+    main: string;
+    icon: string;
+  }[];
+}

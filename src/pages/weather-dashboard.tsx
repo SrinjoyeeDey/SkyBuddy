@@ -14,6 +14,7 @@ import HealthRecommendations from "@/components/healthRecommendations";
 import WeatherPlaylists from "@/components/weather-playlist";
 import { CalendarConnect } from '../components/ui/CalendarConnect';
 import { UpcomingEvents } from '../components/UpcomingEvents';
+import { ActivitySuggestions } from '@/components/ActivitySuggestions';
 
 const WeatherDashboard = () => {
   const {coordinates,error:locationError,getLocation,isLoading:locationLoading}=useGeolocation();
@@ -129,6 +130,7 @@ const WeatherDashboard = () => {
         {/* forecast */}
         <WeatherForecast data={forecastQuery.data} />
       </div>
+      {forecastQuery.data && <ActivitySuggestions data={forecastQuery.data} />}
       <WeatherPlaylists data={weatherQuery.data} />
     </div>
   );
