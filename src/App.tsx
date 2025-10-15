@@ -9,6 +9,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Toaster } from 'sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import PlannerPage from './pages/planner-page';
 
 const queryClient=new QueryClient({
   defaultOptions:{
@@ -33,6 +34,7 @@ function App(){
           <Routes>
             <Route  path='/' element={<WeatherDashboard />}/>
             <Route  path='/city/:cityName' element={<CityPage />}/>
+            <Route  path='/planner' element={<PlannerPage />}/> {/* 2. Add the new route here */}
           </Routes>
         </Layout>
         <Toaster richColors/>

@@ -12,7 +12,6 @@ import WeatherForecast from "@/components/weather-forecast";
 import FavoriteCities from "@/components/favorite-cities";
 import HealthRecommendations from "@/components/healthRecommendations";
 import WeatherPlaylists from "@/components/weather-playlist";
-import { PersonalPlanner } from "@/components/PersonalPlanner";
 
 const WeatherDashboard = () => {
   const {coordinates,error:locationError,getLocation,isLoading:locationLoading}=useGeolocation();
@@ -27,55 +26,20 @@ const WeatherDashboard = () => {
   const handleRefresh=()=>{
     getLocation();
   };
-
+  
   if(locationLoading){
     return <WeatherSkeleton />
   }
-
   if(locationError){
-    return <Alert variant="destructive">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>Error!</AlertTitle>
-      <AlertDescription className="flex flex-col gap-4">
-        <p>{locationError}</p>
-        <Button onClick={getLocation} variant={'outline'} className="w-fit">
-          <MapPin className="mr-2 h-4 w-4" />
-          Enable Location
-        </Button>
-      </AlertDescription>
-    </Alert>;
+    return <Alert variant="destructive">{/* ...error JSX... */}</Alert>;
   }
-
   if(!coordinates){
-    return <Alert variant="destructive">
-      <AlertTitle>Location required</AlertTitle>
-        <AlertDescription className="flex flex-col gap-4">
-          <p>Please enable loaction access tp see your local weather</p>
-          <Button onClick={getLocation} variant={'outline'} className="w-fit">
-            <MapPin className="mr-2 h-4 w-4" />
-            Enable Location
-          </Button>
-        </AlertDescription>
-    </Alert>;
+    return <Alert variant="destructive">{/* ...error JSX... */}</Alert>;
   }
-
   const locationName=locationQuery.data?.[0];
-
   if(weatherQuery.error || forecastQuery.error){
-    return (<Alert variant="destructive">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>Error!</AlertTitle>
-      <AlertDescription className="flex flex-col gap-4">
-        <p>Failed to fetch weather data. Please try again.</p>
-        <Button onClick={handleRefresh} variant={'outline'} className="w-fit">
-          <RefreshCcw className="mr-2 h-4 w-4" />
-          Retry
-        </Button>
-      </AlertDescription>
-    </Alert>
-    )
+    return (<Alert variant="destructive">{/* ...error JSX... */}</Alert>)
   }
-
   if(!weatherQuery.data || !forecastQuery.data) {
     return <WeatherSkeleton />
   }
@@ -98,6 +62,7 @@ const WeatherDashboard = () => {
 
       <HealthRecommendations aqi={aqi} uv={uv} pollen={pollen} />
 
+
       <div className="grid gap-6">
         <div className="flex flex-col lg:flex-row gap-4">
           {weatherQuery.data && (
@@ -113,12 +78,11 @@ const WeatherDashboard = () => {
         <WeatherDetails data={weatherQuery.data} />
         <WeatherForecast data={forecastQuery.data} />
       </div>
-
-      {forecastQuery.data && <PersonalPlanner forecastData={forecastQuery.data} />}
-
+      
       <WeatherPlaylists data={weatherQuery.data} />
     </div>
   );
 }
 
 export default WeatherDashboard;
+
