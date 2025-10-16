@@ -8,9 +8,10 @@ import type { Playlist } from '../context/playlist-provider';
 
 interface PlaylistManagerProps {
   mood?: string;
+  onSelectPlaylist?: (id: string) => void;
 }
 
-export const PlaylistManager: React.FC<PlaylistManagerProps> = ({ mood }) => {
+export const PlaylistManager: React.FC<PlaylistManagerProps> = ({ mood, onSelectPlaylist }) => {
   const {
     playlists,
     createPlaylist,
@@ -103,6 +104,7 @@ export const PlaylistManager: React.FC<PlaylistManagerProps> = ({ mood }) => {
               filteredPlaylists.map((playlist: Playlist) => (
                 <motion.div
                   key={playlist.id}
+                  onClick={() => onSelectPlaylist?.(playlist.id)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 hover:shadow-lg hover:border-purple-200 dark:hover:border-purple-800 transition-all duration-300"
