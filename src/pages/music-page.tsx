@@ -26,7 +26,13 @@ const getWeatherBackground = (weather: string) => {
 
 // Helper component for playlist detail and local player
 // Persistent local audio management for each playlist
-import type { Playlist } from '../types/playlist';
+interface Playlist {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  spotifyUrl: string;
+}
 
 function PlaylistDetailWithLocalPlayer({ playlist }: { playlist: Playlist }) {
   const LOCAL_AUDIO_KEY = `skybuddy_local_audio_${playlist.id}`;
@@ -40,6 +46,8 @@ function PlaylistDetailWithLocalPlayer({ playlist }: { playlist: Playlist }) {
   });
   const [playingIdx, setPlayingIdx] = React.useState<number | null>(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
+  const [shuffle, setShuffle] = React.useState(false);
+  const [volume, setVolume] = React.useState(0.7);
   const audioRef = React.useRef<HTMLAudioElement>(null);
   const [progress, setProgress] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
@@ -95,6 +103,30 @@ function PlaylistDetailWithLocalPlayer({ playlist }: { playlist: Playlist }) {
     }
   }
 
+  // Next/Prev with shuffle
+  function handleNext() {
+    if (!audioList.length) return;
+    let nextIdx;
+    if (shuffle) {
+      nextIdx = Math.floor(Math.random() * audioList.length);
+      if (audioList.length > 1 && nextIdx === playingIdx) {
+        nextIdx = (nextIdx + 1) % audioList.length;
+      }
+    } else {
+      nextIdx = playingIdx !== null ? (playingIdx + 1) % audioList.length : 0;
+    }
+    setPlayingIdx(nextIdx);
+    setIsPlaying(true);
+    setProgress(0);
+  }
+  function handlePrev() {
+    if (!audioList.length) return;
+    const prevIdx = playingIdx !== null ? (playingIdx - 1 + audioList.length) % audioList.length : 0;
+    setPlayingIdx(prevIdx);
+    setIsPlaying(true);
+    setProgress(0);
+  }
+
   // When playingIdx changes, set src and play if needed
   React.useEffect(() => {
     if (playingIdx !== null && audioRef.current) {
@@ -105,6 +137,13 @@ function PlaylistDetailWithLocalPlayer({ playlist }: { playlist: Playlist }) {
     }
     // eslint-disable-next-line
   }, [playingIdx]);
+
+  // Volume control
+  React.useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   // When isPlaying changes, play or pause
   React.useEffect(() => {
@@ -220,41 +259,109 @@ function PlaylistDetailWithLocalPlayer({ playlist }: { playlist: Playlist }) {
               {audioList.map((audio, idx) => (
                 <motion.li
                   key={audio.url}
-                  className="flex items-center gap-3 bg-white/20 rounded p-2"
+                  className="flex flex-col gap-2 bg-gradient-to-br from-blue-100/60 to-blue-300/40 dark:from-gray-900/60 dark:to-gray-800/40 rounded-2xl p-4 shadow-lg"
                   initial={{ opacity: 0, x: 40 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -40 }}
                   transition={{ type: 'spring', stiffness: 120, damping: 18 }}
                   whileHover={{ scale: 1.02, boxShadow: '0 2px 12px 0 rgba(0,0,0,0.08)' }}
                 >
-                  <motion.button
-                    className={`px-3 py-1 rounded-full font-semibold shadow transition-colors duration-200 ${playingIdx === idx && isPlaying ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
-                    onClick={() => handlePlayPause(idx)}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {playingIdx === idx && isPlaying ? 'Pause' : 'Play'}
-                  </motion.button>
-                  <span className="flex-1 truncate font-medium">🎵 {audio.name}</span>
-                  <motion.button
-                    className="text-red-400 hover:text-red-600 text-xs font-semibold"
-                    onClick={() => handleDeleteAudio(idx)}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Delete
-                  </motion.button>
+                  <div className="flex items-center gap-3">
+                    <motion.button
+                      className={`w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 bg-white/60 dark:bg-gray-800/60 shadow transition-colors duration-200 text-xl ${playingIdx === idx && isPlaying ? 'ring-2 ring-blue-400' : 'hover:bg-gray-200/60 dark:hover:bg-gray-700/40'}`}
+                      onClick={() => handlePlayPause(idx)}
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                      title={playingIdx === idx && isPlaying ? 'Pause' : 'Play'}
+                    >
+                      {playingIdx === idx && isPlaying ? <span className="material-icons">pause</span> : <span className="material-icons">play_arrow</span>}
+                    </motion.button>
+                    <span className="flex-1 truncate font-medium text-lg">🎵 {audio.name}</span>
+                    <motion.button
+                      className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 bg-white/60 dark:bg-gray-800/60 shadow text-red-400 hover:text-red-600 text-xl"
+                      onClick={() => handleDeleteAudio(idx)}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      title="Delete"
+                    >
+                      <span className="material-icons">delete</span>
+                    </motion.button>
+                  </div>
                   {playingIdx === idx && (
-                    <div className="flex items-center gap-2 w-64">
-                      <input
-                        type="range"
-                        min={0}
-                        max={duration || 0}
-                        value={progress}
-                        onChange={handleSeek}
-                        className="w-32 accent-blue-500"
-                        step="0.01"
-                      />
-                      <span className="text-xs tabular-nums w-16 text-right">{formatTime(progress)} / {formatTime(duration)}</span>
-                    </div>
+                    <>
+                      {/* Animated Progress bar */}
+                      <motion.div className="w-full flex flex-col items-center gap-2 mt-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+                        <motion.input
+                          type="range"
+                          min={0}
+                          max={duration}
+                          value={progress}
+                          onChange={handleSeek}
+                          className="w-full accent-blue-500 h-2 rounded-lg cursor-pointer"
+                          step="0.1"
+                          whileFocus={{ scale: 1.03 }}
+                          style={{ background: `linear-gradient(90deg, #3b82f6 ${(progress / (duration || 1)) * 100}%, #e5e7eb ${(progress / (duration || 1)) * 100}%)` }}
+                        />
+                        <div className="flex justify-between w-full text-xs text-gray-400">
+                          <span>{formatTime(progress)}</span>
+                          <span>{formatTime(duration)}</span>
+                        </div>
+                      </motion.div>
+                      {/* Controls */}
+                      <motion.div className="flex gap-4 items-center mt-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+                        <motion.button
+                          onClick={handlePrev}
+                          className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 bg-white/60 dark:bg-gray-800/60 shadow text-xl hover:bg-gray-200/60 dark:hover:bg-gray-700/40"
+                          whileHover={{ scale: 1.15 }}
+                          whileTap={{ scale: 0.9 }}
+                          title="Previous"
+                        >
+                          <span className="material-icons">skip_previous</span>
+                        </motion.button>
+                        <motion.button
+                          onClick={() => handlePlayPause(idx)}
+                          className={`w-14 h-14 flex items-center justify-center rounded-full border-2 border-blue-400 bg-white/80 dark:bg-gray-900/80 shadow-lg text-3xl ${isPlaying ? 'ring-2 ring-blue-400' : ''}`}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          title={isPlaying ? 'Pause' : 'Play'}
+                        >
+                          {isPlaying ? <span className="material-icons">pause</span> : <span className="material-icons">play_arrow</span>}
+                        </motion.button>
+                        <motion.button
+                          onClick={handleNext}
+                          className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 bg-white/60 dark:bg-gray-800/60 shadow text-xl hover:bg-gray-200/60 dark:hover:bg-gray-700/40"
+                          whileHover={{ scale: 1.15 }}
+                          whileTap={{ scale: 0.9 }}
+                          title="Next"
+                        >
+                          <span className="material-icons">skip_next</span>
+                        </motion.button>
+                        <motion.button
+                          onClick={() => setShuffle(s => !s)}
+                          className={`w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 shadow ${shuffle ? 'bg-blue-100/80 dark:bg-blue-900/40 text-blue-500' : 'bg-white/60 dark:bg-gray-800/60 text-gray-400'}`}
+                          whileHover={{ scale: 1.15 }}
+                          whileTap={{ scale: 0.9 }}
+                          title="Shuffle"
+                        >
+                          <span className="material-icons">shuffle</span>
+                        </motion.button>
+                      </motion.div>
+                      {/* Volume */}
+                      <motion.div className="flex items-center gap-2 w-full mt-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+                        <span className="text-gray-400">🔉</span>
+                        <motion.input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={volume}
+                          onChange={e => setVolume(Number(e.target.value))}
+                          className="w-full accent-blue-500 h-2 rounded-lg cursor-pointer"
+                          whileFocus={{ scale: 1.03 }}
+                        />
+                        <span className="text-gray-400">🔊</span>
+                      </motion.div>
+                    </>
                   )}
                 </motion.li>
               ))}
