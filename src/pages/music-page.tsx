@@ -404,12 +404,11 @@ const MusicPage: React.FC = () => {
   const weatherQuery = useWeatherQuery(coordinates);
   const weatherMain = weatherQuery.data?.weather?.[0]?.main || 'Clear';
   const background = getWeatherBackground(weatherMain);
-
   // Get mood and playlist from query params
   const [searchParams] = useSearchParams();
-  const moodParam = searchParams.get('mood') || 'Happy';
-  // Normalize mood to MoodType
-  const mood = moodParam.toLowerCase() as MoodType;
+  const moodParam = searchParams.get('mood');
+  // Normalize mood to MoodType (without default fallback)
+  const mood = moodParam?.toLowerCase() as MoodType | undefined;
   const playlistId = searchParams.get('playlist');
 
   // Get recommended playlists for current weather and mood
@@ -430,18 +429,20 @@ const MusicPage: React.FC = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 100, damping: 18, delay: 0.1 }}
-      >
-        <motion.h1
-          className="text-3xl font-bold text-center mb-4"
+      >        <motion.div
+          className="text-center mb-8"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Mood Playlist: {mood}
-        </motion.h1>
-        {selectedPlaylist ? (
-          <PlaylistDetailWithLocalPlayer playlist={selectedPlaylist} />
-        ) : (
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+            {mood ? `${mood.charAt(0).toUpperCase() + mood.slice(1)} Vibes` : 'Your Music'}
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+            {mood ? `Perfect tracks to match your ${mood} mood` : 'Discover and manage your playlists'}
+          </p>
+        </motion.div>{selectedPlaylist ? (
+          <PlaylistDetailWithLocalPlayer playlist={selectedPlaylist} />        ) : (
           <>
             <MusicPlayer mood={mood} />
             <PlaylistManager mood={mood} />

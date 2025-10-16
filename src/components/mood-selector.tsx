@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { Smile, Wind, Brain, Zap, Sparkles } from 'lucide-react';
-import type { MoodType } from '@/types/playlist';
+import type { MoodType } from '../types/playlist';
 
 interface MoodSelectorProps {
   selectedMood?: MoodType;
@@ -23,31 +22,32 @@ const MoodSelector = ({ selectedMood, onMoodChange }: MoodSelectorProps) => {
       onMoodChange(mood);
     }
   };
-
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <h3 className="text-sm font-medium text-muted-foreground">How are you feeling?</h3>
-        <span className="text-xs text-muted-foreground">(Optional)</span>
+    <div className="space-y-4">
+      <div className="text-center">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">How are you feeling?</h3>
+        <p className="text-sm text-muted-foreground">Choose a mood to discover perfect playlists</p>
       </div>
       
-      <div className="flex flex-wrap gap-2">
-        {moodOptions.map((mood) => (
+      <div className="flex flex-wrap justify-center gap-3">        {moodOptions.map((mood) => (
           <button
             key={mood.value}
             onClick={() => handleMoodClick(mood.value)}
             className={`
-              inline-flex items-center gap-2 px-4 py-2 rounded-full 
-              transition-all duration-200 font-medium text-sm
+              group inline-flex items-center gap-3 px-6 py-4 rounded-2xl 
+              transition-all duration-300 font-semibold text-sm
+              border-2 hover:scale-105 hover:shadow-lg
               ${mood.color}
               ${selectedMood === mood.value 
-                ? 'ring-2 ring-offset-2 ring-offset-background scale-105' 
-                : 'scale-100'
+                ? 'ring-4 ring-offset-2 ring-offset-background scale-105 shadow-lg border-transparent' 
+                : 'border-transparent hover:border-current/20'
               }
             `}
           >
-            {mood.icon}
-            <span>{mood.label}</span>
+            <div className="transition-transform duration-300 group-hover:scale-110">
+              {mood.icon}
+            </div>
+            <span className="font-bold">{mood.label}</span>
           </button>
         ))}
       </div>

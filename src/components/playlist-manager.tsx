@@ -1,234 +1,229 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Plus, Trash2, Share2, Music } from 'lucide-react';
+import { usePlaylist } from '../hooks/use-playlist';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import type { Playlist } from '../context/playlist-provider';
+
 interface PlaylistManagerProps {
   mood?: string;
 }
 
-interface Playlist {
-  name: string;
-  mood: string;
-  tracks: string[];
-}
-
-const FAVORITES_KEY = 'skybuddy_favorite_tracks';
-
-function getStoredFavorites(): string[] {
-  try {
-    const data = localStorage.getItem(FAVORITES_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveFavorites(favs: string[]) {
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
-}
-const LOCAL_KEY = 'skybuddy_playlists';
-
-function getStoredPlaylists(): Playlist[] {
-  try {
-    const data = localStorage.getItem(LOCAL_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
-
-function savePlaylists(playlists: Playlist[]) {
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(playlists));
-}
-
 export const PlaylistManager: React.FC<PlaylistManagerProps> = ({ mood }) => {
-  const [playlists, setPlaylists] = React.useState<Playlist[]>(() => getStoredPlaylists());
-  const [newName, setNewName] = React.useState('');
-  const [favorites, setFavorites] = React.useState<string[]>(() => getStoredFavorites());
+  const {
+    playlists,
+    createPlaylist,
+    deletePlaylist,
+    addTrack,
+    sharePlaylist
+  } = usePlaylist();
+  
+  const [newName, setNewName] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [trackInputs, setTrackInputs] = useState<{ [playlistId: string]: string }>({});
 
   // Filter playlists by mood if provided
-  const filtered = mood ? playlists.filter(p => p.mood === mood) : playlists;
+  const filteredPlaylists = mood
+    ? playlists.filter((p: Playlist) => p.mood.toLowerCase() === mood.toLowerCase())
+    : playlists;
 
-  function handleAdd() {
+  // Handle creating new playlist
+  const handleCreatePlaylist = async () => {
     if (!newName.trim()) return;
-    const newPl = { name: newName.trim(), mood: mood || 'General', tracks: [] };
-    const updated = [...playlists, newPl];
-    setPlaylists(updated);
-    savePlaylists(updated);
-    setNewName('');
-  }
-
-  function handleDelete(idx: number) {
-    const updated = playlists.filter((_, i) => i !== idx);
-    setPlaylists(updated);
-    savePlaylists(updated);
-  }
-
-  // Track management state
-  const [trackInputs, setTrackInputs] = React.useState<{ [playlistIdx: number]: string }>({});
-  const [editingTrack, setEditingTrack] = React.useState<{ playlistIdx: number; trackIdx: number; value: string } | null>(null);
-  // Favorite/unfavorite a track
-  function handleToggleFavorite(track: string) {
-    let updated: string[];
-    if (favorites.includes(track)) {
-      updated = favorites.filter(f => f !== track);
-    } else {
-      updated = [...favorites, track];
+    
+    try {
+      await createPlaylist(newName.trim(), mood || 'General', newDescription.trim() || undefined);
+      setNewName('');
+      setNewDescription('');
+    } catch (error) {
+      console.error('Failed to create playlist:', error);
     }
-    setFavorites(updated);
-    saveFavorites(updated);
-  }
+  };
 
-  // Add a track to a playlist
-  function handleAddTrack(playlistIdx: number) {
-    const input = trackInputs[playlistIdx]?.trim();
-    if (!input) return;
-    const updated = playlists.map((pl, idx) =>
-      idx === playlistIdx ? { ...pl, tracks: [...pl.tracks, input] } : pl
-    );
-    setPlaylists(updated);
-    savePlaylists(updated);
-    setTrackInputs(inputs => ({ ...inputs, [playlistIdx]: '' }));
-  }
+  // Handle adding track to playlist
+  const handleAddTrack = (playlistId: string) => {
+    const trackName = trackInputs[playlistId]?.trim();
+    if (!trackName) return;
+    
+    try {
+      addTrack(playlistId, trackName);
+      setTrackInputs(prev => ({ ...prev, [playlistId]: '' }));
+    } catch (error) {
+      console.error('Failed to add track:', error);
+    }
+  };
 
-  // Delete a track from a playlist
-  function handleDeleteTrack(playlistIdx: number, trackIdx: number) {
-    const updated = playlists.map((pl, idx) =>
-      idx === playlistIdx ? { ...pl, tracks: pl.tracks.filter((_, tIdx) => tIdx !== trackIdx) } : pl
-    );
-    setPlaylists(updated);
-    savePlaylists(updated);
-  }
-
-  // Start editing a track
-  function handleEditTrackStart(playlistIdx: number, trackIdx: number, value: string) {
-    setEditingTrack({ playlistIdx, trackIdx, value });
-  }
-
-  // Save edited track
-  function handleEditTrackSave() {
-    if (!editingTrack) return;
-    const { playlistIdx, trackIdx, value } = editingTrack;
-    if (!value.trim()) return;
-    const updated = playlists.map((pl, idx) =>
-      idx === playlistIdx
-        ? { ...pl, tracks: pl.tracks.map((t, tIdx) => (tIdx === trackIdx ? value.trim() : t)) }
-        : pl
-    );
-    setPlaylists(updated);
-    savePlaylists(updated);
-    setEditingTrack(null);
-  }
-
-  // Cancel editing
-  function handleEditTrackCancel() {
-    setEditingTrack(null);
-  }
-
+  // Handle sharing
+  const handleShare = async (playlistId: string) => {
+    try {
+      const shareId = await sharePlaylist(playlistId);
+      const shareUrl = `${window.location.origin}/playlist/shared/${shareId}`;
+      
+      // Copy to clipboard if available
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Share link copied to clipboard!');
+      } else {
+        prompt('Copy this share link:', shareUrl);
+      }
+    } catch (error) {
+      console.error('Failed to share playlist:', error);
+      alert('Failed to share playlist');
+    }
+  };
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white/10 rounded-xl shadow p-6 mt-6">
-      <h2 className="text-xl font-bold mb-4">Your Playlists</h2>
-
-      {/* Favorites section */}
-      <div className="mb-6">
-        <div className="text-lg font-semibold mb-2 flex items-center gap-2">
-          <span role="img" aria-label="star">⭐</span> Favorites
-        </div>
-        {favorites.length === 0 ? (
-          <div className="text-xs text-gray-400">No favorite tracks yet.</div>
-        ) : (
-          <ul className="space-y-1">
-            {favorites.map((track, idx) => (
-              <li key={idx} className="flex items-center gap-2 text-xs">
-                <span>{track}</span>
-                <button className="text-yellow-500 hover:text-yellow-700 text-xs" onClick={() => handleToggleFavorite(track)}>
-                  Unfavorite
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <ul className="space-y-4">
-        {filtered.map((pl, idx) => {
-          const playlistIdx = playlists.indexOf(pl);
-          return (
-            <li key={idx} className="bg-white/5 rounded p-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold">{pl.name}</div>
-                  <div className="text-xs text-gray-400">Mood: {pl.mood}</div>
+    <div className="space-y-6">
+      <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-2xl font-bold tracking-tight">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 text-white">
+              <Music className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-xl">Your Music Collection</div>
+              {mood && <div className="text-sm font-medium text-muted-foreground capitalize">{mood} vibes</div>}
+            </div>
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          {/* Playlists */}
+          <div className="space-y-4">            {filteredPlaylists.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center">
+                  <Music className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <button className="text-red-400 hover:text-red-600" onClick={() => handleDelete(playlistIdx)}>Delete</button>
+                <h3 className="text-lg font-semibold mb-2">No playlists yet</h3>
+                <p className="text-muted-foreground">
+                  {mood ? `No playlists found for "${mood}" mood.` : 'Create your first playlist below to get started!'}
+                </p>
               </div>
-              {/* Track list */}
-              <div className="mt-2 ml-2">
-                <div className="text-sm font-medium mb-1">Tracks:</div>
-                <ul className="space-y-1">
-                  {pl.tracks.length === 0 && <li className="text-xs text-gray-400">No tracks yet.</li>}
-                  {pl.tracks.map((track, tIdx) => (
-                    <li key={tIdx} className="flex items-center gap-2">
-                      {editingTrack && editingTrack.playlistIdx === playlistIdx && editingTrack.trackIdx === tIdx ? (
-                        <>
-                          <input
-                            className="px-2 py-1 rounded border border-gray-300 text-xs"
-                            value={editingTrack.value}
-                            onChange={e => setEditingTrack({ ...editingTrack, value: e.target.value })}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') handleEditTrackSave();
-                              if (e.key === 'Escape') handleEditTrackCancel();
-                            }}
-                            autoFocus
-                          />
-                          <button className="text-green-500 text-xs" onClick={handleEditTrackSave}>Save</button>
-                          <button className="text-gray-400 text-xs" onClick={handleEditTrackCancel}>Cancel</button>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-xs">{track}</span>
-                          <button className="text-yellow-500 hover:text-yellow-700 text-xs" onClick={() => handleToggleFavorite(track)}>
-                            {favorites.includes(track) ? '★' : '☆'}
-                          </button>
-                          <button className="text-blue-400 hover:text-blue-600 text-xs" onClick={() => handleEditTrackStart(playlistIdx, tIdx, track)}>Edit</button>
-                          <button className="text-red-400 hover:text-red-600 text-xs" onClick={() => handleDeleteTrack(playlistIdx, tIdx)}>Delete</button>
-                        </>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                {/* Add track input */}
-                <div className="flex gap-2 mt-2">
+            ) : (
+              filteredPlaylists.map((playlist: Playlist) => (
+                <motion.div
+                  key={playlist.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 hover:shadow-lg hover:border-purple-200 dark:hover:border-purple-800 transition-all duration-300"
+                >
+                  {/* Playlist Header */}
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <h4 className="font-semibold">{playlist.name}</h4>
+                      <div className="text-sm text-muted-foreground">
+                        <span>Mood: {playlist.mood}</span>
+                        {playlist.description && <span> • {playlist.description}</span>}
+                        <span> • {playlist.tracks.length} tracks</span>
+                        {playlist.isShared && <span> • Shared</span>}
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleShare(playlist.id)}
+                      >
+                        <Share2 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => deletePlaylist(playlist.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Tracks */}
+                  <div className="space-y-2">
+                    <h5 className="text-sm font-medium">Tracks:</h5>
+                    
+                    {playlist.tracks.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No tracks yet.</p>
+                    ) : (
+                      <div className="space-y-1">
+                        {playlist.tracks.map((track: { id: string; name: string; artist?: string }) => (
+                          <div key={track.id} className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm">{track.name}</span>
+                              {track.artist && (
+                                <span className="text-xs text-muted-foreground">- {track.artist}</span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Add Track Input */}
+                    <div className="flex gap-2 mt-3">
+                      <input
+                        placeholder="Track name (e.g., 'Artist - Song Title')"
+                        value={trackInputs[playlist.id] || ''}
+                        onChange={(e) => setTrackInputs(prev => ({ ...prev, [playlist.id]: e.target.value }))}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleAddTrack(playlist.id); }}
+                        className="flex-1 p-2 text-sm bg-background rounded border"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddTrack(playlist.id)}
+                        disabled={!trackInputs[playlist.id]?.trim()}
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Add Track
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            )}
+          </div>          {/* Create New Playlist */}
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 rounded-2xl p-6 border border-purple-100 dark:border-purple-800/30">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-blue-600 text-white">
+                  <Plus className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold">Create New Playlist</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Playlist Name</label>
                   <input
-                    className="px-2 py-1 rounded border border-gray-300 text-xs bg-white/80"
-                    placeholder="Add new track (title or URL)"
-                    value={trackInputs[playlistIdx] || ''}
-                    onChange={e => setTrackInputs(inputs => ({ ...inputs, [playlistIdx]: e.target.value }))}
-                    onKeyDown={e => { if (e.key === 'Enter') handleAddTrack(playlistIdx); }}
+                    placeholder="Enter a catchy name..."
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all placeholder:text-gray-400"
                   />
-                  <button
-                    className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
-                    onClick={() => handleAddTrack(playlistIdx)}
-                  >
-                    Add Track
-                  </button>
                 </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                  <input
+                    placeholder="What's this playlist about? (optional)"
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                    className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all placeholder:text-gray-400"
+                  />
+                </div>
+                
+                <Button
+                  onClick={handleCreatePlaylist}
+                  disabled={!newName.trim()}
+                  className="w-full h-12 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Create Playlist
+                </Button>
               </div>
-            </li>
-          );
-        })}
-      </ul>
-      <div className="flex gap-2 mt-4">
-        <input
-          className="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/80"
-          placeholder="New playlist name"
-          value={newName}
-          onChange={e => setNewName(e.target.value)}
-        />
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={handleAdd}
-        >
-          Add Playlist
-        </button>
-      </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
