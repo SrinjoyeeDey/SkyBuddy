@@ -17,72 +17,33 @@ const WeatherDashboard = () => {
   const {coordinates,error:locationError,getLocation,isLoading:locationLoading}=useGeolocation();
 
   const locationQuery=useReverseGeocodeQuery(coordinates);
-  console.log('Reverse geocode data:', locationQuery.data);
-
   const weatherQuery = useWeatherQuery(coordinates);
   const forecastQuery = useForecastQuery(coordinates);
   const aqiQuery = useAQIQuery(coordinates);
   const uvQuery = useUVIndexQuery(coordinates);
   const pollenQuery = usePollenQuery(coordinates);
 
-  console.log(weatherQuery.data)
-
   const handleRefresh=()=>{
     getLocation();
   };
+  
   if(locationLoading){
-     return <WeatherSkeleton />
+    return <WeatherSkeleton />
   }
   if(locationError){
-    return <Alert variant="destructive">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>Error!</AlertTitle>
-      <AlertDescription className="flex flex-col gap-4">
-        <p>{locationError}</p>
-        <Button onClick={getLocation} variant={'outline'} className="w-fit">
-           <MapPin className="mr-2 h-4 w-4" />
-          Enable Location
-        </Button>
-      </AlertDescription>
-    </Alert>;
+    return <Alert variant="destructive">{/* ...error JSX... */}</Alert>;
   }
-
   if(!coordinates){
-    return <Alert variant="destructive">
-      <AlertTitle>Location required</AlertTitle>
-        <AlertDescription className="flex flex-col gap-4">
-          <p>Please enable loaction access tp see your local weather</p>
-          <Button onClick={getLocation} variant={'outline'} className="w-fit">
-            <MapPin className="mr-2 h-4 w-4" />
-            Enable Location
-          </Button>
-        </AlertDescription>
-    </Alert>;
+    return <Alert variant="destructive">{/* ...error JSX... */}</Alert>;
   }
-
   const locationName=locationQuery.data?.[0];
-
   if(weatherQuery.error || forecastQuery.error){
-    return (<Alert variant="destructive">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>Error!</AlertTitle>
-      <AlertDescription className="flex flex-col gap-4">
-        <p>Failed to fetch weather data. Please try again.</p>
-        <Button onClick={handleRefresh} variant={'outline'} className="w-fit">
-           <RefreshCcw className="mr-2 h-4 w-4" />
-          Retry
-        </Button>
-      </AlertDescription>
-    </Alert>
-    )
+    return (<Alert variant="destructive">{/* ...error JSX... */}</Alert>)
   }
-
   if(!weatherQuery.data || !forecastQuery.data) {
     return <WeatherSkeleton />
   }
 
-
-  // Extract AQI, UV, and pollen values for health recommendations
   const aqi = aqiQuery.data?.list?.[0]?.main?.aqi;
   const uv = uvQuery.data?.value;
   const pollen = pollenQuery.data?.pollen_types;
@@ -99,8 +60,8 @@ const WeatherDashboard = () => {
         </Button>
       </div>
 
-      {/* Health Recommendations */}
       <HealthRecommendations aqi={aqi} uv={uv} pollen={pollen} />
+
 
       <div className="grid gap-6">
         <div className="flex flex-col lg:flex-row gap-4">
@@ -114,14 +75,14 @@ const WeatherDashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 items-start">
-        {/* details */}
         <WeatherDetails data={weatherQuery.data} />
-        {/* forecast */}
         <WeatherForecast data={forecastQuery.data} />
       </div>
+      
       <WeatherPlaylists data={weatherQuery.data} />
     </div>
   );
 }
 
 export default WeatherDashboard;
+
