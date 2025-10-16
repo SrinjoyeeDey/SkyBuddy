@@ -77,7 +77,20 @@
    
 3. *Set up your OpenWeatherMap API key:*
    - Copy .env.example to .env and add your API key.
-4. *Run the app:*
+
+4. *(Optional)Set up Google Calendar Integration*
+
+To test or work on the Personal Planner feature, you will need a Google OAuth Client ID.
+How to get your Google OAuth Client ID? Follow the steps below
+```
+1. Go to the Google Cloud Console and create a new project.
+2. Enable the Google Calendar API in the "Library" section.
+3. Go to "Credentials" and create a new OAuth 2.0 Client ID for a Web application.
+4. Add http://localhost:5173 and http://127.0.0.1:5173 (or your local dev port) as "Authorized JavaScript origins".
+5. Copy the generated Client ID and paste it into your .env file as the value for VITE_GOOGLE_CLIENT_ID.
+```
+
+5. *Run the app:*
    sh
    npm run dev
    
