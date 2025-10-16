@@ -4,6 +4,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.1.7-646cff?logo=vite&style=flat-square)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.13-38bdf8?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/)
 [![OpenWeatherMap](https://img.shields.io/badge/API-OpenWeatherMap-orange?style=flat-square)](https://openweathermap.org/)
+[![Cloudflare R2](https://img.shields.io/badge/Storage-Cloudflare%20R2-f38020?logo=cloudflare&style=flat-square)](https://developers.cloudflare.com/r2/)
 
 ---
 
