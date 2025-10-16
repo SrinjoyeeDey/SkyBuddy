@@ -1,35 +1,40 @@
-import { useGoogleLogin } from '@react-oauth/google';
-import { Button } from './button';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "./button";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export const CalendarConnect = () => {
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      localStorage.setItem('google_access_token', tokenResponse.access_token);
-      window.location.reload();
-    },
-    // Requesting permission to write events as well for the "add to calendar" link
-    scope: 'https://www.googleapis.com/auth/calendar',
-  });
+    const login = useGoogleLogin({
+        onSuccess: (tokenResponse) => {
+            localStorage.setItem('google_access_token', tokenResponse.access_token);
+            window.location.reload();
+        },
+        scope: 'https://www.googleapis.com/auth/calendar.readonly',
+    });
 
-  return (
-    <Card className="bg-slate-800/50 border-dashed border-slate-600">
-        <CardHeader>
-            <CardTitle>🌟 Unlock Your Personal Planner</CardTitle>
-        </CardHeader>
-        <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-                Let SkyBuddy be your smart assistant! Connect your calendar to:
-            </p>
-            <ul className="list-disc list-inside text-sm space-y-2 mb-6 text-slate-300">
-                <li>See your upcoming events alongside the weather.</li>
-                <li>Get smart activity suggestions tailored to the forecast.</li>
-                <li>Add suggestions or custom events to your calendar in one click!</li>
-            </ul>
-            <Button onClick={() => login()} className="w-full bg-sky-600 hover:bg-sky-700">
-             🔗 Connect Google Calendar
-            </Button>
-        </CardContent>
-    </Card>
-  );
+    return (
+        // Using the app's primary blue for the top border in light mode
+        <Card className="shadow-md border-t-4 border-t-blue-500 dark:border-t-slate-700">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <span className="text-yellow-500">✨</span>
+                    Unlock Your Personal Planner
+                </CardTitle>
+                <CardDescription>
+                    Let SkyBuddy be your smart assistant! Connect your calendar to:
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ul className="list-disc space-y-2 pl-5 mb-6 text-sm text-muted-foreground">
+                    <li>See your upcoming events alongside the weather.</li>
+                    <li>Get smart activity suggestions tailored to the forecast.</li>
+                    <li>Add suggestions or custom events to your calendar in one click!</li>
+                </ul>
+                {/* Using the primary blue for the button to match the branding */}
+                <Button onClick={() => login()} className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-white dark:text-primary-foreground">
+                    🔗 Connect Google Calendar
+                </Button>
+            </CardContent>
+        </Card>
+    );
 };
+
