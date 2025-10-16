@@ -8,11 +8,12 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 .vscode
-.worker-configuration.d.ts
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 
 report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+package-lock.json
+worker-configuration.d.ts
 
 # Runtime data
 
