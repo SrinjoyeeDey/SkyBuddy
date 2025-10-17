@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
@@ -22,7 +21,6 @@ function getStoredFavorites(): string[] {
 function saveFavorites(favs: string[]) {
   localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
 }
-
 
 // Dummy track data for now
 const demoTracks = [
@@ -145,6 +143,23 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ mood }) => {
     }
   };
 
+  // Icon helper for Material Icons
+  const Icon = ({
+    name,
+    className = "",
+    style = {},
+    ...props
+  }: React.HTMLAttributes<HTMLElement> & { name: string }) => (
+    <i className={`material-icons ${className}`} style={style} {...props}>{name}</i>
+  );
+
+  // Volume icon logic
+  const getVolumeIcon = () => {
+    if (volume === 0) return "volume_off";
+    if (volume < 0.5) return "volume_down";
+    return "volume_up";
+  };
+
   return (
     <motion.div
       className="w-full max-w-md mx-auto bg-gradient-to-br from-blue-100/60 to-blue-300/40 dark:from-gray-900/60 dark:to-gray-800/40 rounded-2xl shadow-2xl p-8 flex flex-col items-center gap-6"
@@ -169,13 +184,13 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ mood }) => {
               whileTap={{ scale: 0.9 }}
               className={
                 favorites.includes(tracks[current].title + tracks[current].artist)
-                  ? 'text-yellow-400'
+                  ? 'text-red-500'
                   : 'text-gray-400'
               }
               title={favorites.includes(tracks[current].title + tracks[current].artist) ? 'Unfavorite' : 'Favorite'}
               onClick={handleToggleFavorite}
             >
-              {favorites.includes(tracks[current].title + tracks[current].artist) ? '★' : '☆'}
+              <Icon name={favorites.includes(tracks[current].title + tracks[current].artist) ? "favorite" : "favorite_border"} style={{ fontSize: 22 }} />
             </motion.button>
           </motion.div>
           <div className="text-sm text-gray-500 dark:text-gray-300 mb-2">{tracks[current].artist}</div>
@@ -206,7 +221,9 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ mood }) => {
               whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.9 }}
               title="Previous"
-            >⏮️</motion.button>
+            >
+              <Icon name="fast_rewind" style={{ fontSize: 28 }} />
+            </motion.button>
             <motion.button
               onClick={playPause}
               className="p-4 bg-blue-500 text-white rounded-full shadow-lg text-2xl"
@@ -214,7 +231,7 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ mood }) => {
               whileTap={{ scale: 0.95 }}
               title={playing ? 'Pause' : 'Play'}
             >
-              {playing ? '⏸️' : '▶️'}
+              <Icon name={playing ? "pause" : "play_arrow"} style={{ fontSize: 34 }} />
             </motion.button>
             <motion.button
               onClick={next}
@@ -222,7 +239,9 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ mood }) => {
               whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.9 }}
               title="Next"
-            >⏭️</motion.button>
+            >
+              <Icon name="fast_forward" style={{ fontSize: 28 }} />
+            </motion.button>
             <motion.button
               onClick={() => setShuffle(s => !s)}
               className={`p-2 rounded-full ${shuffle ? 'bg-blue-500 text-white' : 'bg-blue-100/60 dark:bg-gray-700/40 text-blue-500 dark:text-gray-300'}`}
@@ -230,12 +249,12 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ mood }) => {
               whileTap={{ scale: 0.9 }}
               title="Shuffle"
             >
-              🔀
+              <Icon name="shuffle" style={{ fontSize: 22 }} />
             </motion.button>
           </motion.div>
           {/* Volume */}
           <motion.div className="flex items-center gap-2 w-full mt-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-            <span className="text-gray-400">🔉</span>
+            <Icon name={getVolumeIcon()} className="text-gray-400" style={{ fontSize: 22 }} />
             <motion.input
               type="range"
               min={0}
@@ -246,7 +265,8 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ mood }) => {
               className="w-full accent-blue-500 h-2 rounded-lg cursor-pointer"
               whileFocus={{ scale: 1.03 }}
             />
-            <span className="text-gray-400">🔊</span>
+            {/* Invisible icon for alignment */}
+            <Icon name="volume_up" className="text-gray-400" style={{ fontSize: 22, opacity: 0 }} aria-hidden />
           </motion.div>
         </>
       ) : (
