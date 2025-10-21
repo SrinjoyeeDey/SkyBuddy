@@ -4,7 +4,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.1.7-646cff?logo=vite&style=flat-square)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.13-38bdf8?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/)
 [![OpenWeatherMap](https://img.shields.io/badge/API-OpenWeatherMap-orange?style=flat-square)](https://openweathermap.org/)
-[![Cloudflare R2](https://img.shields.io/badge/Storage-Cloudflare%20R2-f38020?logo=cloudflare&style=flat-square)](https://developers.cloudflare.com/r2/)
+
 
 ---
 
@@ -100,45 +100,6 @@ How to get your Google OAuth Client ID? Follow the steps below
 
 ---
 
-### 🎵 Audio Storage with Cloudflare R2
-SkyBuddy uses Cloudflare R2 for audio file storage. This section explains how to work with this feature.
-
-As a contributor, you don't need a Cloudflare account to work on the project. The app automatically uses a mock implementation in development mode:
-
-File uploads will work locally without actual cloud storage
-Progress indicators and UI flows will function normally
-Uploaded files are stored in browser memory for testing
-For Maintainers
-To enable cloud storage for audio files in production, you'll need to:
-
-1. Install Wrangler CLI:
-```sh
-npm install -g wrangler
-wrangler login
-```
-
-2. Create an R2 bucket:
-```sh
-wrangler r2 bucket create skybuddy-audio
-```
-
-3. Configure CORS:
-```sh
-wrangler r2 bucket cors set skybuddy-audio --allowed-origins="*" --allowed-methods="GET,HEAD" --allowed-headers="*" --max-age=86400
-```
-4. Deploy the worker:
-```sh
-cd r2-upload-worker
-# Update wrangler.toml with your account ID
-wrangler deploy
-```
-
-5. Update environment variables: Add your worker URL to the .env file:
-```sh
-VITE_R2_UPLOAD_ENDPOINT=https://r2-upload-worker.your-subdomain.workers.dev
-```
-
-For more details on R2 setup and management, refer to [the Cloudflare R2 Documentation.](https://developers.cloudflare.com/r2/)
 
 ## 📸 Screenshots & Animations
 
