@@ -12,6 +12,7 @@ import WeatherForecast from "@/components/weather-forecast";
 import FavoriteCities from "@/components/favorite-cities";
 import HealthRecommendations from "@/components/healthRecommendations";
 import WeatherPlaylists from "@/components/weather-playlist";
+import ChatBot from "@/components/ChatBot";
 
 const WeatherDashboard = () => {
   const {coordinates,error:locationError,getLocation,isLoading:locationLoading}=useGeolocation();
@@ -80,6 +81,10 @@ const WeatherDashboard = () => {
       </div>
       
       <WeatherPlaylists data={weatherQuery.data} />
+      <ChatBot 
+        weatherData={weatherQuery.data} 
+        forecastData={forecastQuery.data} 
+      />
     </div>
   );
 }
