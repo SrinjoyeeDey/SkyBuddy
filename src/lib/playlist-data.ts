@@ -1,4 +1,4 @@
-import type { WeatherPlaylistMapping, MoodType, SpotifyPlaylist } from '@/types/playlist';
+import type { WeatherPlaylistMapping, MoodType, SpotifyPlaylist } from '../types/playlist';
 
 // Curated Spotify playlists for different weather conditions
 export const weatherPlaylistMappings: WeatherPlaylistMapping[] = [
