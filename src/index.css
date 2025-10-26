@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -119,5 +119,44 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-variation-settings: 'wght' 400;
+    letter-spacing: -0.01em;
+    line-height: 1.6;
+  }
+  
+  /* Modern typography hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-weight: 600;
+    font-size: 2rem;
+  }
+  
+  h3 {
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+  
+  /* Button and interactive elements */
+  button, .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  
+  /* Code and monospace */
+  code, pre {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
   }
 }

@@ -5,6 +5,7 @@
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.13-38bdf8?logo=tailwindcss&style=flat-square)](https://tailwindcss.com/)
 [![OpenWeatherMap](https://img.shields.io/badge/API-OpenWeatherMap-orange?style=flat-square)](https://openweathermap.org/)
 
+
 ---
 
 
@@ -48,8 +49,10 @@
 ### ⏰ *Hourly & 5-Day Forecasts*
 - Interactive hourly temperature chart (Recharts powered).
 - 5-day forecast with min/max, humidity, wind, and weather icons.
+
   
 <img width="1737" height="449" alt="Screenshot 2025-09-28 101158" src="https://github.com/user-attachments/assets/ea5487cb-1882-45bc-82ab-449fa5352561" />
+
 
 ### 🎨 *Modern UI & Animations*
 - Responsive, mobile-friendly design with Tailwind CSS.
@@ -96,6 +99,7 @@ How to get your Google OAuth Client ID? Follow the steps below
    
 
 ---
+
 
 ## 📸 Screenshots & Animations
 
